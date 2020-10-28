@@ -16,7 +16,7 @@ if (isset($_GET["err"])) {
     $utils = phputils::getSingleton();
     $err = urldecode($_GET["err"]);
     if ($utils->checkPhpInjection($err)) {
-        $utils->onRawIndexErr("Php Injection detected!", "/index.php");
+        $utils->onRawIndexErr("Php Injection detectado!", "/index.php");
         return;
     }
 
