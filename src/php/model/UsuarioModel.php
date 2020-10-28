@@ -8,7 +8,7 @@
 
 namespace php\model;
 
-final class UserModel
+final class UsuarioModel
 {
     private $id, $nome, $nivel;
 
