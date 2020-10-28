@@ -12,7 +12,7 @@ final class VendaModel
 {
     private $id, $id_usuario, $id_pagamento, $id_produtos, $preco_produtos, $valor, $data_registro;
 
-    public function __construct($id, $id_usuario, $id_pagamento, array $id_produtos, array $preco_produtos, $valor, \DateTime $data_registro)
+    public function __construct($id, $id_usuario, $id_pagamento, array $id_produtos, array $preco_produtos, $valor, $data_registro)
     {
         $this->id = $id;
         $this->id_usuario = $id_usuario;
@@ -78,13 +78,8 @@ final class VendaModel
         $this->valor = $valor;
     }
 
-    public function getDataRegistro(): \DateTime
+    public function getDataRegistro(): mixed
     {
         return $this->data_registro;
-    }
-
-    public function setDataRegistro(\DateTime $data_registro): void
-    {
-        $this->data_registro = $data_registro;
     }
 }
