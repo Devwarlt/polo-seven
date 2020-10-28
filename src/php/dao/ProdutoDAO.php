@@ -14,6 +14,20 @@ use php\model\ProdutoModel;
 
 final class ProdutoDAO
 {
+    private static $singleton;
+
+    private function __construct()
+    {
+    }
+
+    public static function getSingleton(): ProdutoDAO
+    {
+        if (self::$singleton === null)
+            self::$singleton = new ProdutoDAO();
+
+        return self::$singleton;
+    }
+
     public function criarProduto(ProdutoModel $produto): bool
     {
         $mysql = mysqldb::getSingleton();

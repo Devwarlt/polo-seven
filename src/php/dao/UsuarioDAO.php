@@ -14,6 +14,20 @@ use php\model\UsuarioModel;
 
 final class UsuarioDAO
 {
+    private static $singleton;
+
+    private function __construct()
+    {
+    }
+
+    public static function getSingleton(): UsuarioDAO
+    {
+        if (self::$singleton === null)
+            self::$singleton = new UsuarioDAO();
+
+        return self::$singleton;
+    }
+
     public function criarUsuario(UsuarioModel $usuario): bool
     {
         $mysql = mysqldb::getSingleton();

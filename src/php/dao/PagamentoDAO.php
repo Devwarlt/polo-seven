@@ -14,6 +14,20 @@ use php\model\PagamentoModel;
 
 final class PagamentoDAO
 {
+    private static $singleton;
+
+    private function __construct()
+    {
+    }
+
+    public static function getSingleton(): PagamentoDAO
+    {
+        if (self::$singleton === null)
+            self::$singleton = new PagamentoDAO();
+
+        return self::$singleton;
+    }
+
     public function criarPagamento(PagamentoModel $pagamento): bool
     {
         $mysql = mysqldb::getSingleton();

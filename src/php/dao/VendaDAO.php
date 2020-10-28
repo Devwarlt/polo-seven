@@ -14,6 +14,20 @@ use php\model\VendaModel;
 
 final class VendaDAO
 {
+    private static $singleton;
+
+    private function __construct()
+    {
+    }
+
+    public static function getSingleton(): VendaDAO
+    {
+        if (self::$singleton === null)
+            self::$singleton = new VendaDAO();
+
+        return self::$singleton;
+    }
+
     public function criarVenda(VendaModel $venda): bool
     {
         $mysql = mysqldb::getSingleton();

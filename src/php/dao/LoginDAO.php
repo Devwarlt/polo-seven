@@ -14,6 +14,20 @@ use php\model\LoginModel;
 
 final class LoginDAO
 {
+    private static $singleton;
+
+    private function __construct()
+    {
+    }
+
+    public static function getSingleton(): LoginDAO
+    {
+        if (self::$singleton === null)
+            self::$singleton = new LoginDAO();
+
+        return self::$singleton;
+    }
+
     public function consultarLogin(string $nome, string $senha): LoginModel
     {
         $mysql = mysqldb::getSingleton();
