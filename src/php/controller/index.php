@@ -6,4 +6,4 @@
  * Time: 00:25
  */
 
-http_redirect("../../index.html");
+header("Location:../../index.html");

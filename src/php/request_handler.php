@@ -7,7 +7,7 @@
  */
 
 if (count($_POST, 0)) {
-    http_redirect("../index.html");
+    header("Location:../index.html");
     return;
 }
 
