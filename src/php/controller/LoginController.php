@@ -8,6 +8,8 @@
 
 namespace php\controller;
 
+use php\dao\LoginDAO as login;
+
 final class LoginController
 {
     private static $singleton;
@@ -24,8 +26,9 @@ final class LoginController
         return self::$singleton;
     }
 
-    public function test(): string
+    public function validarLogin(string $nome, string $senha): bool
     {
-        return "LoginController::test()";
+        $dao = login::getSingleton();
+        return $dao->consultarLogin($nome, $senha) !== null;
     }
 }
