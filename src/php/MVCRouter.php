@@ -19,25 +19,41 @@ if (count($_POST) === 0 || !isset($_POST["controller"])) {
     return;
 }
 
-include "controller/LoginController.php";
-
 $controller = $_POST["controller"];
 switch ($controller) {
     case "login":
+        include "controller/LoginController.php";
+        include "dao/LoginDAO.php";
+        include "model/LoginModel.php";
+
         if (!isset($_POST["nome"]) || !isset($_POST["senha"])) {
             $utils->onRawIndexErr("Credenciais inválidas!", $errRef);
             return;
         }
 
         $login = loginctrl::getSingleton();
-        if (!$login->validarLogin($_POST["nome"], $_POST["senha"]))
-            $utils->onRawIndexErr("Credenciais não autenticadas.", $errRef);
-        else
+        $loginResponse = null;
+        if ($login->verificarSessaoLogin() || ($loginResponse = $login->autenticarLogin($_POST["nome"], $_POST["senha"])) === null)
             header("Location:../dashboard.php");
+        else
+            $utils->onRawIndexErr($loginResponse, $errRef);
         break;
     case "dashboard":
+        include "controller/DashboardController.php";
+        include "dao/PagamentoDAO.php";
+        include "dao/ProdutoDAO.php";
+        include "dao/ProdutoDAO.php";
+        include "dao/UsuarioDAO.php";
+        include "dao/VendaDAO.php";
+        include "model/PagamentoModel.php";
+        include "model/ProdutoModel.php";
+        include "model/UsuarioModel.php";
+        include "model/VendaModel.php";
+        include "view/DashboardView.php";
+
+        // TODO: implements 'dashboard' controller features.
         break;
     default:
-        die("Unable to connect to controller: <strong>$controller</strong>");
+        $utils->onRawIndexErr("Controlador não encontrado: <strong>$controller</strong>", $errRef);
         break;
 }
