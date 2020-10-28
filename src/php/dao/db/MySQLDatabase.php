@@ -8,8 +8,7 @@
 
 namespace php\dao\db;
 
-
-class MySQLDatabase
+final class MySQLDatabase
 {
 
 }

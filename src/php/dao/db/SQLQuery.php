@@ -8,8 +8,7 @@
 
 namespace php\dao\db;
 
-
-class SQLQuery
+final class SQLQuery
 {
 
 }

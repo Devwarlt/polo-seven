@@ -8,7 +8,6 @@
 
 namespace php;
 
-
 final class AutoLoader
 {
     public static function register()
