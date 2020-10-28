@@ -6,4 +6,9 @@
  * Time: 00:33
  */
 
-header("Location:../../index.php");
+include "../PhpUtils.php";
+
+use php\PhpUtils as phputils;
+
+$utils = phputils::getSingleton();
+$utils->onRawIndexErr("Invalid request!", "../../index.php");
