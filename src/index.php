@@ -7,7 +7,7 @@
 <body>
 <h1>Polo Seven - Início</h1>
 <hr/>
-<form action="/polo-seven/php/MVCRouter.php" method="post">
+<form action="/php/MVCRouter.php" method="post">
     <input type="hidden" id="login_flag" name="target" value="login"/>
     <h2>Login</h2>
     <br/>

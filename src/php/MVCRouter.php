@@ -11,15 +11,15 @@ if (count($_POST) === 0 || !isset($_POST["target"])) {
     return;
 }
 
-include "AutoLoader.php";
+include "controller/LoginController.php";
 
-use php\AutoLoader as al;
-
-al::register();
+use php\controller\LoginController as loginctrl;
 
 $target = $_POST["target"];
 switch ($target) {
     case "login":
+        $login = loginctrl::getSingleton();
+        echo $login->test();
         break;
     case "dashboard":
         break;

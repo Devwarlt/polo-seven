@@ -23,4 +23,9 @@ final class LoginController
 
         return self::$singleton;
     }
+
+    public function test(): string
+    {
+        return "LoginController::test()";
+    }
 }

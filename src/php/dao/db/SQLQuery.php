@@ -12,7 +12,7 @@ final class SQLQuery
 {
     private $sql, $params;
 
-    public function __construct($sql, array $params = null)
+    public function __construct(string $sql, array $params = null)
     {
         $this->sql = $sql;
         $this->params = $params;
