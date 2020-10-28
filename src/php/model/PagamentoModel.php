@@ -12,7 +12,7 @@ final class PagamentoModel
 {
     private $id, $nome;
 
-    public function __construct($id, $nome)
+    public function __construct(int $id, string $nome)
     {
         $this->id = $id;
         $this->nome = $nome;
@@ -28,7 +28,7 @@ final class PagamentoModel
         return $this->nome;
     }
 
-    public function setNome($nome): void
+    public function setNome(string $nome): void
     {
         $this->nome = $nome;
     }

@@ -35,7 +35,7 @@ final class MySQLDatabase
         return $this->dml($query->getQuery());
     }
 
-    private function dml($sql): bool
+    private function dml(string $sql): bool
     {
         $query = self::$connection->prepare($sql);
         return $query->execute();
@@ -56,7 +56,7 @@ final class MySQLDatabase
         return $this->dql($query->getQuery());
     }
 
-    private function dql($sql): \PDOStatement
+    private function dql(string $sql): \PDOStatement
     {
         $query = self::$connection->query($sql);
         if ($query->execute() && $query->rowCount() > 0)

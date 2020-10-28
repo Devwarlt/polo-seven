@@ -24,7 +24,7 @@ final class PagamentoDAO
             ));
     }
 
-    public function consultarPagamento($id): PagamentoModel
+    public function consultarPagamento(int $id): PagamentoModel
     {
         $mysql = mysqldb::getSingleton();
         $result = $mysql->select(
@@ -57,7 +57,7 @@ final class PagamentoDAO
         );
     }
 
-    public function removerPagamento($id): bool
+    public function removerPagamento(int $id): bool
     {
         $mysql = mysqldb::getSingleton();
         return $mysql->delete(

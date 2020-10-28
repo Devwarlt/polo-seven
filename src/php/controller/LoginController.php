@@ -3,12 +3,12 @@
  * Created by PhpStorm.
  * User: devwarlt
  * Date: 28/10/2020
- * Time: 00:33
+ * Time: 02:53
  */
 
 namespace php\controller;
 
-final class DashboardController
+final class LoginController
 {
     private static $singleton;
 
@@ -16,10 +16,10 @@ final class DashboardController
     {
     }
 
-    public static function getSingleton(): DashboardController
+    public static function getSingleton(): LoginController
     {
         if (self::$singleton === null)
-            self::$singleton = new DashboardController();
+            self::$singleton = new LoginController();
 
         return self::$singleton;
     }

@@ -26,7 +26,7 @@ final class SQLQuery
         return $this->sql;
     }
 
-    private static function replaceArray($value, array $array): string
+    private static function replaceArray(string $value, array $array): string
     {
         foreach ($array as $innerKey => $innerValue)
             $value = self::replace($innerKey, $innerValue, $value);
@@ -34,7 +34,7 @@ final class SQLQuery
         return $value;
     }
 
-    private static function replace($key, $value, $subject): string
+    private static function replace(mixed $key, mixed $value, string $subject): string
     {
         return str_replace($key, $value, $subject);
     }

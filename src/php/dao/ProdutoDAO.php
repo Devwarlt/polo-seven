@@ -28,7 +28,7 @@ final class ProdutoDAO
             ));
     }
 
-    public function consultarProduto($id): ProdutoModel
+    public function consultarProduto(int $id): ProdutoModel
     {
         $mysql = mysqldb::getSingleton();
         $result = $mysql->select(
@@ -65,7 +65,7 @@ final class ProdutoDAO
         );
     }
 
-    public function removerProduto($id): bool
+    public function removerProduto(int $id): bool
     {
         $mysql = mysqldb::getSingleton();
         return $mysql->delete(

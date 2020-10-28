@@ -6,4 +6,4 @@
  * Time: 00:02
  */
 
-header("Location:../index.html");
+header("Location:../index.php");

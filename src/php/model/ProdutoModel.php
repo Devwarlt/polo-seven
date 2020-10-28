@@ -12,7 +12,7 @@ final class ProdutoModel
 {
     private $id, $nome, $preco_unitario, $total_unidades;
 
-    public function __construct($id, $nome, $preco_unitario, $total_unidades)
+    public function __construct(int $id, string $nome, float $preco_unitario, int $total_unidades)
     {
         $this->id = $id;
         $this->nome = $nome;
@@ -30,7 +30,7 @@ final class ProdutoModel
         return $this->nome;
     }
 
-    public function setNome($nome): void
+    public function setNome(string $nome): void
     {
         $this->nome = $nome;
     }
@@ -40,7 +40,7 @@ final class ProdutoModel
         return $this->preco_unitario;
     }
 
-    public function setPrecoUnitario($preco_unitario): void
+    public function setPrecoUnitario(float $preco_unitario): void
     {
         $this->preco_unitario = $preco_unitario;
     }
@@ -50,7 +50,7 @@ final class ProdutoModel
         return $this->total_unidades;
     }
 
-    public function setTotalUnidades($total_unidades): void
+    public function setTotalUnidades(int $total_unidades): void
     {
         $this->total_unidades = $total_unidades;
     }

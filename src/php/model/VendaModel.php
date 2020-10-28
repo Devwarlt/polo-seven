@@ -12,7 +12,7 @@ final class VendaModel
 {
     private $id, $id_usuario, $id_pagamento, $id_produtos, $preco_produtos, $valor, $data_registro;
 
-    public function __construct($id, $id_usuario, $id_pagamento, array $id_produtos, array $preco_produtos, $valor, $data_registro)
+    public function __construct(int $id, int $id_usuario, int $id_pagamento, array $id_produtos, array $preco_produtos, float $valor, mixed $data_registro)
     {
         $this->id = $id;
         $this->id_usuario = $id_usuario;
@@ -33,7 +33,7 @@ final class VendaModel
         return $this->id_usuario;
     }
 
-    public function setIdUsuario($id_usuario): void
+    public function setIdUsuario(int $id_usuario): void
     {
         $this->id_usuario = $id_usuario;
     }
@@ -43,7 +43,7 @@ final class VendaModel
         return $this->id_pagamento;
     }
 
-    public function setIdPagamento($id_pagamento): void
+    public function setIdPagamento(int $id_pagamento): void
     {
         $this->id_pagamento = $id_pagamento;
     }
@@ -73,7 +73,7 @@ final class VendaModel
         return $this->valor;
     }
 
-    public function setValor($valor): void
+    public function setValor(float $valor): void
     {
         $this->valor = $valor;
     }

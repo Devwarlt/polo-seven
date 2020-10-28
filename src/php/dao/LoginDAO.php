@@ -1,0 +1,40 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: devwarlt
+ * Date: 28/10/2020
+ * Time: 03:01
+ */
+
+namespace php\dao;
+
+use php\dao\db\MySQLDatabase as mysqldb;
+use php\dao\db\SQLQuery as sqlquery;
+use php\model\LoginModel;
+
+final class LoginDAO
+{
+    public function consultarLogin(string $nome, string $senha): LoginModel
+    {
+        $mysql = mysqldb::getSingleton();
+        $result = $mysql->select(
+            new sqlquery(
+                "SELECT `id` FROM `logins` WHERE `nome` = ':nome' AND `senha` = ':senha'",
+                [
+                    ":nome" => $nome,
+                    ":senha" => $senha
+                ]
+            )
+        );
+
+        if ($result === null)
+            return null;
+
+        $login = new LoginModel(
+            $result->id_usuario,
+            $nome,
+            $senha
+        );
+        return $login;
+    }
+}

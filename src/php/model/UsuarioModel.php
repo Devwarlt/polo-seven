@@ -12,7 +12,7 @@ final class UsuarioModel
 {
     private $id, $nome, $nivel;
 
-    public function __construct($id, $nome, $nivel)
+    public function __construct(int $id, string $nome, int $nivel)
     {
         $this->id = $id;
         $this->nome = $nome;
@@ -29,7 +29,7 @@ final class UsuarioModel
         return $this->nome;
     }
 
-    public function setNome($nome): void
+    public function setNome(string $nome): void
     {
         $this->nome = $nome;
     }
@@ -39,7 +39,7 @@ final class UsuarioModel
         return $this->nivel;
     }
 
-    public function setNivel($nivel): void
+    public function setNivel(int $nivel): void
     {
         $this->nivel = $nivel;
     }

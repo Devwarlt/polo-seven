@@ -30,7 +30,7 @@ final class VendaDAO
             ));
     }
 
-    public function consultarVenda($id): VendaModel
+    public function consultarVenda(int $id): VendaModel
     {
         $mysql = mysqldb::getSingleton();
         $result = $mysql->select(
@@ -72,7 +72,7 @@ final class VendaDAO
         );
     }
 
-    public function removerVenda($id): bool
+    public function removerVenda(int $id): bool
     {
         $mysql = mysqldb::getSingleton();
         return $mysql->delete(

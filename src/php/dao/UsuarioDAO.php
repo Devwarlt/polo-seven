@@ -27,7 +27,7 @@ final class UsuarioDAO
             ));
     }
 
-    public function consultarUsuario($id): UsuarioModel
+    public function consultarUsuario(int $id): UsuarioModel
     {
         $mysql = mysqldb::getSingleton();
         $result = $mysql->select(
@@ -62,7 +62,7 @@ final class UsuarioDAO
         );
     }
 
-    public function removerUsuario($id): bool
+    public function removerUsuario(int $id): bool
     {
         $mysql = mysqldb::getSingleton();
         return $mysql->delete(
