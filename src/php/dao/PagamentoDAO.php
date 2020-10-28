@@ -24,7 +24,6 @@ final class PagamentoDAO
     {
         if (self::$singleton === null)
             self::$singleton = new PagamentoDAO();
-
         return self::$singleton;
     }
 
@@ -62,7 +61,7 @@ final class PagamentoDAO
         $mysql = mysqldb::getSingleton();
         return $mysql->update(
             new sqlquery(
-                "UPDATE `pagamentos` SET `id` = :id, `nome` = ':nome'",
+                "UPDATE `pagamentos` SET `nome` = ':nome' WHERE `id` = :id",
                 [
                     ":id" => $pagamento->getId(),
                     ":nome" => $pagamento->getNome()

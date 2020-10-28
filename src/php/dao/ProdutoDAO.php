@@ -24,7 +24,6 @@ final class ProdutoDAO
     {
         if (self::$singleton === null)
             self::$singleton = new ProdutoDAO();
-
         return self::$singleton;
     }
 
@@ -68,7 +67,7 @@ final class ProdutoDAO
         $mysql = mysqldb::getSingleton();
         return $mysql->update(
             new sqlquery(
-                "UPDATE `produtos` SET `id` = :id, `nome` = ':nome', `preco_unitario` = :preco_unitario, `total_unidades` = :total_unidades",
+                "UPDATE `produtos` SET `nome` = ':nome', `preco_unitario` = :preco_unitario, `total_unidades` = :total_unidades WHERE `id` = :id",
                 [
                     ":id" => $produto->getId(),
                     ":nome" => $produto->getNome(),

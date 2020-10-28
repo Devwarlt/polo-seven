@@ -24,7 +24,6 @@ final class UsuarioDAO
     {
         if (self::$singleton === null)
             self::$singleton = new UsuarioDAO();
-
         return self::$singleton;
     }
 
@@ -33,11 +32,8 @@ final class UsuarioDAO
         $mysql = mysqldb::getSingleton();
         return $mysql->insert(
             new sqlquery(
-                "INSERT INTO `usuarios`(`nome`, `nivel`) VALUES (':nome', :nivel)",
-                [
-                    ":nome" => $usuario->getNome(),
-                    ":nivel" => $usuario->getNivel()
-                ]
+                "INSERT INTO `usuarios`(`nivel`) VALUES (:nivel)",
+                [":nivel" => $usuario->getNivel()]
             ));
     }
 
@@ -55,7 +51,6 @@ final class UsuarioDAO
 
         $usuario = new UsuarioModel(
             $result->id,
-            $result->nome,
             $result->nivel
         );
         return $usuario;
@@ -66,10 +61,9 @@ final class UsuarioDAO
         $mysql = mysqldb::getSingleton();
         return $mysql->update(
             new sqlquery(
-                "UPDATE `usuarios` SET `id` = :id, `nome` = ':nome', `nivel` = :nivel",
+                "UPDATE `usuarios` SET `nivel` = :nivel WHERE `id` = :id",
                 [
                     ":id" => $usuario->getId(),
-                    ":nome" => $usuario->getNome(),
                     ":nivel" => $usuario->getNivel()
                 ]
             )

@@ -23,7 +23,6 @@ final class PhpUtils
     {
         if (self::$singleton === null)
             self::$singleton = new PhpUtils();
-
         return self::$singleton;
     }
 

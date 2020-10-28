@@ -24,7 +24,6 @@ final class VendaDAO
     {
         if (self::$singleton === null)
             self::$singleton = new VendaDAO();
-
         return self::$singleton;
     }
 
@@ -33,7 +32,7 @@ final class VendaDAO
         $mysql = mysqldb::getSingleton();
         return $mysql->insert(
             new sqlquery(
-                "INSERT INTO `vendas`(`id_usuario`, `id_pagamento`, `id_produtos`, `preco_produtos`, `valor`, `data_registro`) VALUES (:id_usuario, :id_pagamento, ':id_produtos', ':preco_produtos', :valor, CURRENT_TIMESTAMP)",
+                "INSERT INTO `vendas`(`id_usuario`, `id_pagamento`, `id_produtos`, `preco_produtos`, `valor`) VALUES (:id_usuario, :id_pagamento, ':id_produtos', ':preco_produtos', :valor)",
                 [
                     ":id_usuario" => $venda->getIdUsuario(),
                     ":id_pagamento" => $venda->getIdPagamento(),
@@ -73,7 +72,7 @@ final class VendaDAO
         $mysql = mysqldb::getSingleton();
         return $mysql->update(
             new sqlquery(
-                "UPDATE `vendas` SET `id` = :id, `id_usuario` = :id_usuario, `id_pagamento` = :id_pagamento, `id_produtos` = ':id_produtos', `preco_produtos` = ':preco_produtos', `valor` = :valor, `data_registro` = CURRENT_TIMESTAMP",
+                "UPDATE `vendas` SET `id_usuario` = :id_usuario, `id_pagamento` = :id_pagamento, `id_produtos` = ':id_produtos', `preco_produtos` = ':preco_produtos', `valor` = :valor, `data_registro` = CURRENT_TIMESTAMP WHERE `id` = :id",
                 [
                     ":id" => $venda->getId(),
                     ":id_usuario" => $venda->getIdUsuario(),

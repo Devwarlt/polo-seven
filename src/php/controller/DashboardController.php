@@ -20,7 +20,6 @@ final class DashboardController
     {
         if (self::$singleton === null)
             self::$singleton = new DashboardController();
-
         return self::$singleton;
     }
 }

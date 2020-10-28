@@ -24,7 +24,6 @@ final class LoginDAO
     {
         if (self::$singleton === null)
             self::$singleton = new LoginDAO();
-
         return self::$singleton;
     }
 

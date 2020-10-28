@@ -10,28 +10,17 @@ namespace php\model;
 
 final class UsuarioModel
 {
-    private $id, $nome, $nivel;
+    private $id, $nivel;
 
-    public function __construct(int $id, string $nome, int $nivel)
+    public function __construct(int $id, int $nivel)
     {
         $this->id = $id;
-        $this->nome = $nome;
         $this->nivel = $nivel;
     }
 
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function getNome(): string
-    {
-        return $this->nome;
-    }
-
-    public function setNome(string $nome): void
-    {
-        $this->nome = $nome;
     }
 
     public function getNivel(): int
