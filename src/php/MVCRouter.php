@@ -6,24 +6,38 @@
  * Time: 03:15
  */
 
-if (count($_POST) === 0 || !isset($_POST["target"])) {
-    header("Location:../index.php");
+include "PhpUtils.php";
+
+use php\controller\LoginController as loginctrl;
+use php\PhpUtils as phputils;
+
+$utils = phputils::getSingleton();
+$errRef = "../index.php";
+
+if (count($_POST) === 0 || !isset($_POST["controller"])) {
+    $utils->onRawIndexErr("Requisição inválida!", $errRef);
     return;
 }
 
 include "controller/LoginController.php";
 
-use php\controller\LoginController as loginctrl;
-
-$target = $_POST["target"];
-switch ($target) {
+$controller = $_POST["controller"];
+switch ($controller) {
     case "login":
+        if (!isset($_POST["nome"]) || !isset($_POST["senha"])) {
+            $utils->onRawIndexErr("Credenciais inválidas!", $errRef);
+            return;
+        }
+
         $login = loginctrl::getSingleton();
-        echo $login->test();
+        if (!$login->validarLogin($_POST["nome"], $_POST["senha"]))
+            $utils->onRawIndexErr("Credenciais não autenticadas.", $errRef);
+        else
+            header("Location:../dashboard.php");
         break;
     case "dashboard":
         break;
     default:
-        die("Unable to connect to target: <strong>$target</strong>");
+        die("Unable to connect to controller: <strong>$controller</strong>");
         break;
 }
