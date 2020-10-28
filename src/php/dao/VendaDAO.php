@@ -12,22 +12,22 @@ use php\model\VendaModel;
 
 final class VendaDAO
 {
-    public function criarVenda(VendaModel $venda)
+    public function criarVenda(VendaModel $venda): bool
     {
         // TODO: Implement criarVenda() method.
     }
 
-    public function consultarVenda($id)
+    public function consultarVenda($id): VendaModel
     {
         // TODO: Implement consultarVenda() method.
     }
 
-    public function alterarVenda(VendaModel $venda)
+    public function alterarVenda(VendaModel $venda): bool
     {
         // TODO: Implement alterarVenda() method.
     }
 
-    public function removerVenda($id)
+    public function removerVenda($id): bool
     {
         // TODO: Implement removerVenda() method.
     }

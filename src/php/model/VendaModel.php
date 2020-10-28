@@ -12,7 +12,7 @@ final class VendaModel
 {
     private $id, $id_usuario, $id_pagamento, $id_produtos, $preco_produtos, $valor, $data_registro;
 
-    public function __construct($id, $id_usuario, $id_pagamento, $id_produtos, $preco_produtos, $valor, $data_registro)
+    public function __construct($id, $id_usuario, $id_pagamento, array $id_produtos, array $preco_produtos, $valor, \DateTime $data_registro)
     {
         $this->id = $id;
         $this->id_usuario = $id_usuario;
@@ -23,12 +23,12 @@ final class VendaModel
         $this->data_registro = $data_registro;
     }
 
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getIdUsuario()
+    public function getIdUsuario(): int
     {
         return $this->id_usuario;
     }
@@ -38,7 +38,7 @@ final class VendaModel
         $this->id_usuario = $id_usuario;
     }
 
-    public function getIdPagamento()
+    public function getIdPagamento(): int
     {
         return $this->id_pagamento;
     }
@@ -48,27 +48,27 @@ final class VendaModel
         $this->id_pagamento = $id_pagamento;
     }
 
-    public function getIdProdutos()
+    public function getIdProdutos(): array
     {
         return $this->id_produtos;
     }
 
-    public function setIdProdutos($id_produtos): void
+    public function setIdProdutos(array $id_produtos): void
     {
         $this->id_produtos = $id_produtos;
     }
 
-    public function getPrecoProdutos()
+    public function getPrecoProdutos(): array
     {
         return $this->preco_produtos;
     }
 
-    public function setPrecoProdutos($preco_produtos): void
+    public function setPrecoProdutos(array $preco_produtos): void
     {
         $this->preco_produtos = $preco_produtos;
     }
 
-    public function getValor()
+    public function getValor(): float
     {
         return $this->valor;
     }
@@ -78,12 +78,12 @@ final class VendaModel
         $this->valor = $valor;
     }
 
-    public function getDataRegistro()
+    public function getDataRegistro(): \DateTime
     {
         return $this->data_registro;
     }
 
-    public function setDataRegistro($data_registro): void
+    public function setDataRegistro(\DateTime $data_registro): void
     {
         $this->data_registro = $data_registro;
     }

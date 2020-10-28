@@ -19,27 +19,27 @@ final class UserModel
         $this->nivel = $nivel;
     }
 
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getNome()
+    public function getNome(): string
     {
         return $this->nome;
     }
 
-    public function setNome($nome)
+    public function setNome($nome): void
     {
         $this->nome = $nome;
     }
 
-    public function getNivel()
+    public function getNivel(): int
     {
         return $this->nivel;
     }
 
-    public function setNivel($nivel)
+    public function setNivel($nivel): void
     {
         $this->nivel = $nivel;
     }

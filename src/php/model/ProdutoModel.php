@@ -20,12 +20,12 @@ final class ProdutoModel
         $this->total_unidades = $total_unidades;
     }
 
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getNome()
+    public function getNome(): string
     {
         return $this->nome;
     }
@@ -35,7 +35,7 @@ final class ProdutoModel
         $this->nome = $nome;
     }
 
-    public function getPrecoUnitario()
+    public function getPrecoUnitario(): float
     {
         return $this->preco_unitario;
     }
@@ -45,7 +45,7 @@ final class ProdutoModel
         $this->preco_unitario = $preco_unitario;
     }
 
-    public function getTotalUnidades()
+    public function getTotalUnidades(): int
     {
         return $this->total_unidades;
     }

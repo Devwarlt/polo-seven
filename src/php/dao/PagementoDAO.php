@@ -12,22 +12,22 @@ use php\model\PagamentoModel;
 
 final class PagementoDAO
 {
-    public function criarPagemento(PagamentoModel $pagamento)
+    public function criarPagemento(PagamentoModel $pagamento): bool
     {
         // TODO: Implement criarPagemento() method.
     }
 
-    public function consultarPagemento($id)
+    public function consultarPagemento($id): PagamentoModel
     {
         // TODO: Implement consultarPagemento() method.
     }
 
-    public function alterarPagemento(PagamentoModel $pagamento)
+    public function alterarPagemento(PagamentoModel $pagamento): bool
     {
         // TODO: Implement alterarPagemento() method.
     }
 
-    public function removerPagemento($id)
+    public function removerPagemento($id): bool
     {
         // TODO: Implement removerPagemento() method.
     }

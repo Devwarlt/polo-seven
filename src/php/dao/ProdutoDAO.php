@@ -12,22 +12,22 @@ use php\model\ProdutoModel;
 
 final class ProdutoDAO
 {
-    public function criarProduto(ProdutoModel $produto)
+    public function criarProduto(ProdutoModel $produto): bool
     {
         // TODO: Implement criarProduto() method.
     }
 
-    public function consultarProduto($id)
+    public function consultarProduto($id): ProdutoModel
     {
         // TODO: Implement consultarProduto() method.
     }
 
-    public function alterarProduto(ProdutoModel $produto)
+    public function alterarProduto(ProdutoModel $produto): bool
     {
         // TODO: Implement alterarProduto() method.
     }
 
-    public function removerProduto($id)
+    public function removerProduto($id): bool
     {
         // TODO: Implement removerProduto() method.
     }

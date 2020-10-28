@@ -18,12 +18,12 @@ final class PagamentoModel
         $this->nome = $nome;
     }
 
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getNome()
+    public function getNome(): string
     {
         return $this->nome;
     }
