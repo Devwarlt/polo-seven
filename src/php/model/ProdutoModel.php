@@ -1,15 +1,14 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: devwarlt
+ * UserModel: devwarlt
  * Date: 28/10/2020
  * Time: 00:34
  */
 
 namespace php\model;
 
-
-class ProdutoModel
+final class ProdutoModel
 {
 
 }
