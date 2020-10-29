@@ -49,9 +49,10 @@ final class PagamentoDAO
         if ($result === null)
             return null;
 
+        $data = $result->fetch(\PDO::FETCH_OBJ);
         $pagamento = new PagamentoModel(
-            $result->id,
-            $result->nome
+            $data->id,
+            $data->nome
         );
         return $pagamento;
     }

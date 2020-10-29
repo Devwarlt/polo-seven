@@ -55,14 +55,15 @@ final class VendaDAO
         if ($result === null)
             return null;
 
+        $data = $result->fetch(\PDO::FETCH_OBJ);
         $venda = new VendaModel(
-            $result->id,
-            $result->id_usuario,
-            $result->id_pagamento,
-            explode(',', $result->id_produtos),
-            explode(',', $result->preco_produtos),
-            $result->valor,
-            $result->data_registro
+            $data->id,
+            $data->id_usuario,
+            $data->id_pagamento,
+            explode(',', $data->id_produtos),
+            explode(',', $data->preco_produtos),
+            $data->valor,
+            $data->data_registro
         );
         return $venda;
     }

@@ -10,18 +10,18 @@ namespace php\model;
 
 final class LoginModel
 {
-    private $id_usuario, $nome, $senha;
+    private $id, $nome, $senha;
 
-    public function __construct($id_usuario, $nome, $senha)
+    public function __construct(int $id, string $nome, string $senha)
     {
+        $this->id = $id;
         $this->nome = $nome;
         $this->senha = $senha;
-        $this->id_usuario = $id_usuario;
     }
 
-    public function getIdUsuario(): int
+    public function getId(): int
     {
-        return $this->id_usuario;
+        return $this->id;
     }
 
     public function getNome()

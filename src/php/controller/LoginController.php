@@ -11,9 +11,9 @@ namespace php\controller;
 use php\dao\LoginDAO as login;
 use php\model\LoginModel;
 
-define("LOGIN_ID", "login-id-cookie");
-define("LOGIN_NAME", "login-name-cookie");
-define("LOGIN_PASSWORD", "login-password-cookie");
+define("LOGIN_ID", "login-id");
+define("LOGIN_NAME", "login-name");
+define("LOGIN_PASSWORD", "login-password");
 
 final class LoginController
 {
@@ -38,39 +38,52 @@ final class LoginController
         return self::$singleton;
     }
 
-    public function autenticarLogin(string $nome, string $senha): ?string
+    public function autenticarLogin(string $nome, string $senha): array
     {
-        if (!preg_match(self::$name_regex_pattern, $nome))
-            return "Nome inválido!";
+        $result = array(
+            "login" => null,
+            "err" => null
+        );
 
-        if (!preg_match(self::$password_regex_pattern, $senha))
-            return "Senha inválida!";
+        if (!preg_match(self::$name_regex_pattern, $nome)) {
+            $result["err"] = "Nome inválido!";
+            return $result;
+        }
+
+        if (!preg_match(self::$password_regex_pattern, $senha)) {
+            $result["err"] = "Senha inválida!";
+            return $result;
+        }
 
         $dao = login::getSingleton();
-        if ($dao->consultarLogin($nome, $senha) === null)
-            return "Credenciais não autenticadas!";
+        if (($result["login"] = $dao->consultarLogin($nome, $senha)) === null) {
+            $result["err"] = "Credenciais não autenticadas!";
+            return $result;
+        }
 
-        return null;
+        return $result;
     }
 
     public function criarSessaoLogin(LoginModel $login): void
     {
-        $expire = time() + self::HOUR_TO_SECONDS;
-        setcookie(LOGIN_ID, $login->getIdUsuario());
-        setcookie(LOGIN_NAME, $login->getNome(), $expire);
-        setcookie(LOGIN_PASSWORD, $login->getSenha(), $expire);
+        session_start();
+
+        $_SESSION[LOGIN_ID] = $login->getId();
+        $_SESSION[LOGIN_NAME] = $login->getNome();
+        $_SESSION[LOGIN_PASSWORD] = $login->getSenha();
     }
 
     public function terminarSessaoLogin(): void
     {
-        $expire = time() - self::HOUR_TO_SECONDS;
-        setcookie(LOGIN_ID, "", $expire);
-        setcookie(LOGIN_NAME, "", $expire);
-        setcookie(LOGIN_PASSWORD, "", $expire);
+        session_start();
+
+        unset($_SESSION[LOGIN_ID]);
+        unset($_SESSION[LOGIN_NAME]);
+        unset($_SESSION[LOGIN_PASSWORD]);
     }
 
     public function verificarSessaoLogin(): bool
     {
-        return array_key_exists(LOGIN_ID, $_COOKIE) && array_key_exists(LOGIN_NAME, $_COOKIE) && array_key_exists(LOGIN_PASSWORD, $_COOKIE);
+        return array_key_exists(LOGIN_ID, $_SESSION) && array_key_exists(LOGIN_NAME, $_SESSION) && array_key_exists(LOGIN_PASSWORD, $_SESSION);
     }
 }

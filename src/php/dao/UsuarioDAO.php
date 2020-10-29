@@ -49,9 +49,10 @@ final class UsuarioDAO
         if ($result === null)
             return null;
 
+        $data = $result->fetch(\PDO::FETCH_OBJ);
         $usuario = new UsuarioModel(
-            $result->id,
-            $result->nivel
+            $data->id,
+            $data->nivel
         );
         return $usuario;
     }

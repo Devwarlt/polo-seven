@@ -12,7 +12,7 @@ use php\controller\LoginController as loginctrl;
 use php\PhpUtils as phputils;
 
 $utils = phputils::getSingleton();
-$errRef = "../index.php";
+$errRef = $okRef = "../index.php";
 
 if (count($_POST) === 0 || !isset($_POST["controller"])) {
     $utils->onRawIndexErr("Requisição inválida!", $errRef);
@@ -28,17 +28,31 @@ switch ($controller) {
         include "dao/LoginDAO.php";
         include "model/LoginModel.php";
 
+        $login = loginctrl::getSingleton();
+        if (isset($_POST["logout"])) {
+            $login->terminarSessaoLogin();
+            $utils->onRawIndexOk("Logout efetuado com sucesso!", $okRef);
+            return;
+        }
+
         if (!isset($_POST["nome"]) || !isset($_POST["senha"])) {
             $utils->onRawIndexErr("Credenciais inválidas!", $errRef);
             return;
         }
 
-        $login = loginctrl::getSingleton();
-        $loginResponse = null;
-        if ($login->verificarSessaoLogin() || ($loginResponse = $login->autenticarLogin($_POST["nome"], $_POST["senha"])) === null)
-            header("Location:../dashboard.php");
-        else
-            $utils->onRawIndexErr($loginResponse, $errRef);
+        $okRef = "../dashboard.php";
+        if ($login->verificarSessaoLogin()) {
+            header("Location:$okRef");
+            return;
+        }
+
+        $loginResponse = $login->autenticarLogin($_POST["nome"], $_POST["senha"]);
+        if ($loginResponse["err"] === null) {
+            if ($loginResponse["login"] !== null)
+                $login->criarSessaoLogin($loginResponse["login"]);
+            header("Location:$okRef");
+        } else
+            $utils->onRawIndexErr($loginResponse["err"], $errRef);
         break;
     case "dashboard":
         include "controller/DashboardController.php";

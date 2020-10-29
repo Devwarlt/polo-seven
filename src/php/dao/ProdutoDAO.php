@@ -53,11 +53,12 @@ final class ProdutoDAO
         if ($result === null)
             return null;
 
+        $data = $result->fetch(\PDO::FETCH_OBJ);
         $produto = new ProdutoModel(
-            $result->id,
-            $result->nome,
-            $result->preco_unitario,
-            $result->total_unidades
+            $data->id,
+            $data->nome,
+            $data->preco_unitario,
+            $data->total_unidades
         );
         return $produto;
     }

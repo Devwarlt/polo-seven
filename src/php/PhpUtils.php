@@ -28,8 +28,18 @@ final class PhpUtils
 
     public function onRawIndexErr(string $msg, string $ref): void
     {
-        $err = urlencode($msg);
-        header("Location:$ref?err=$err");
+        self::onRawRedirect($msg, $ref, "err");
+    }
+
+    private function onRawRedirect(string $msg, string $ref, string $var): void
+    {
+        $val = urlencode($msg);
+        header("Location:$ref?$var=$val");
+    }
+
+    public function onRawIndexOk(string $msg, string $ref): void
+    {
+        self::onRawRedirect($msg, $ref, "ok");
     }
 
     public function checkPhpInjection(string $str): bool

@@ -43,8 +43,9 @@ final class LoginDAO
         if ($result === null)
             return null;
 
+        $data = $result->fetch(\PDO::FETCH_OBJ);
         $login = new LoginModel(
-            $result->id_usuario,
+            $data->id,
             $nome,
             $senha
         );
