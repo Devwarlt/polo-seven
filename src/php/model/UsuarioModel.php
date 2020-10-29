@@ -10,6 +10,10 @@ namespace php\model;
 
 final class UsuarioModel
 {
+    const SYSADMIN = 1;
+    const GERENTE = 2;
+    const VENDEDOR = 3;
+
     private $id, $nivel;
 
     public function __construct(int $id, int $nivel)
