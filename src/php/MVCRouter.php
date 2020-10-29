@@ -23,6 +23,8 @@ $controller = $_POST["controller"];
 switch ($controller) {
     case "login":
         include "controller/LoginController.php";
+        include "dao/db/SQLQuery.php";
+        include "dao/db/MySQLDatabase.php";
         include "dao/LoginDAO.php";
         include "model/LoginModel.php";
 
@@ -40,6 +42,8 @@ switch ($controller) {
         break;
     case "dashboard":
         include "controller/DashboardController.php";
+        include "dao/db/SQLQuery.php";
+        include "dao/db/MySQLDatabase.php";
         include "dao/PagamentoDAO.php";
         include "dao/ProdutoDAO.php";
         include "dao/ProdutoDAO.php";
