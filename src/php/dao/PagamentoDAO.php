@@ -37,7 +37,7 @@ final class PagamentoDAO
             ));
     }
 
-    public function consultarPagamento(int $id): PagamentoModel
+    public function consultarPagamento(int $id): ?PagamentoModel
     {
         $mysql = mysqldb::getSingleton();
         $result = $mysql->select(

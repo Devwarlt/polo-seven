@@ -27,7 +27,7 @@ final class LoginDAO
         return self::$singleton;
     }
 
-    public function consultarLogin(string $nome, string $senha): LoginModel
+    public function consultarLogin(string $nome, string $senha): ?LoginModel
     {
         $mysql = mysqldb::getSingleton();
         $result = $mysql->select(

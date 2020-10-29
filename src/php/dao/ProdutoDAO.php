@@ -41,7 +41,7 @@ final class ProdutoDAO
             ));
     }
 
-    public function consultarProduto(int $id): ProdutoModel
+    public function consultarProduto(int $id): ?ProdutoModel
     {
         $mysql = mysqldb::getSingleton();
         $result = $mysql->select(

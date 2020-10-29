@@ -51,17 +51,16 @@ final class MySQLDatabase
         return $this->dml($query->getQuery());
     }
 
-    public function select(SQLQuery $query): \PDOStatement
+    public function select(SQLQuery $query): ?\PDOStatement
     {
         return $this->dql($query->getQuery());
     }
 
-    private function dql(string $sql): \PDOStatement
+    private function dql(string $sql): ?\PDOStatement
     {
         $query = self::$connection->query($sql);
         if ($query->execute() && $query->rowCount() > 0)
             return $query;
-
         return null;
     }
 }

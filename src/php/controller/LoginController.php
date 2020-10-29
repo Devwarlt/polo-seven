@@ -22,7 +22,7 @@ final class LoginController
     public const HOUR_TO_SECONDS = 3600;
     public const DAY_TO_SECONDS = 86400;
 
-    private static $name_regex_pattern = "/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]{3,128}$/";
+    private static $name_regex_pattern = "/^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]{3,128}$/";
     private static $password_regex_pattern = "/^[a-zA-Z0-9'\"!@#$%¨&*()_+¹²³£¢¬§=-]{3,128}$/";
 
     private static $singleton;
@@ -38,7 +38,7 @@ final class LoginController
         return self::$singleton;
     }
 
-    public function autenticarLogin(string $nome, string $senha): string
+    public function autenticarLogin(string $nome, string $senha): ?string
     {
         if (!preg_match(self::$name_regex_pattern, $nome))
             return "Nome inválido!";

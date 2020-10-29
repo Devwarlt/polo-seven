@@ -37,7 +37,7 @@ final class UsuarioDAO
             ));
     }
 
-    public function consultarUsuario(int $id): UsuarioModel
+    public function consultarUsuario(int $id): ?UsuarioModel
     {
         $mysql = mysqldb::getSingleton();
         $result = $mysql->select(

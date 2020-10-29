@@ -43,7 +43,7 @@ final class VendaDAO
             ));
     }
 
-    public function consultarVenda(int $id): VendaModel
+    public function consultarVenda(int $id): ?VendaModel
     {
         $mysql = mysqldb::getSingleton();
         $result = $mysql->select(

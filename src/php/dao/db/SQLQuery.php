@@ -34,7 +34,7 @@ final class SQLQuery
         return $value;
     }
 
-    private static function replace(mixed $key, mixed $value, string $subject): string
+    private static function replace(string $key, string $value, string $subject): string
     {
         return str_replace($key, $value, $subject);
     }
