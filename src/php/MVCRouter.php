@@ -12,7 +12,7 @@ use php\controller\LoginController as loginctrl;
 use php\PhpUtils as phputils;
 
 $utils = phputils::getSingleton();
-$errRef = $okRef = "../index.php";
+$errRef = $okRef = "../";
 
 if (count($_POST) === 0 || !isset($_POST["controller"])) {
     $utils->onRawIndexErr("Requisição inválida!", $errRef);
@@ -40,7 +40,7 @@ switch ($controller) {
             return;
         }
 
-        $okRef = "../dashboard.php";
+        $okRef = "../dashboard";
         if ($login->verificarSessaoLogin()) {
             header("Location:$okRef");
             return;
@@ -60,14 +60,12 @@ switch ($controller) {
         include "dao/db/MySQLDatabase.php";
         include "dao/PagamentoDAO.php";
         include "dao/ProdutoDAO.php";
-        include "dao/ProdutoDAO.php";
         include "dao/UsuarioDAO.php";
         include "dao/VendaDAO.php";
         include "model/PagamentoModel.php";
         include "model/ProdutoModel.php";
         include "model/UsuarioModel.php";
         include "model/VendaModel.php";
-        include "view/DashboardView.php";
 
         // TODO: implements 'dashboard' controller features.
         break;
