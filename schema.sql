@@ -60,3 +60,8 @@ ALTER TABLE `vendas`
 
 ALTER TABLE `vendas`
   ADD CONSTRAINT `vendas_id_pagamento_pagamentos_id` FOREIGN KEY (`id_pagamento`) REFERENCES `pagamentos` (`id`);
+
+/* Add root user */
+INSERT INTO `usuarios` (`nivel`) VALUES ('1');
+
+INSERT INTO `logins` (`nome`, `senha`, `id_usuario`) VALUES ('root', 'toor', '1');
