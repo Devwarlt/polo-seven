@@ -13,16 +13,23 @@ include "php/model/UsuarioModel.php";
 include "php/model/VendaModel.php";
 include "php/view/DashboardView.php";
 
+use php\controller\LoginController as loginctrl;
 use php\dao\UsuarioDAO as usuario;
 use php\PhpUtils as utils;
 
 session_start();
 
 $utils = utils::getSingleton();
+$login = loginctrl::getSingleton();
+if (!$login->verificarSessaoLogin()) {
+    $utils->onRawIndexErr("É necessário realizar login!", "/");
+    return;
+}
+
 $userDao = usuario::getSingleton();
 $user = $userDao->consultarUsuario($_SESSION[LOGIN_ID]);
 if ($user === null) {
-    $utils->onRawIndexErr("Usuário não encontrado!", "/index.php");
+    $utils->onRawIndexErr("Usuário não encontrado!", "/");
     return;
 }
 

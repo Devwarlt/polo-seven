@@ -31,7 +31,7 @@
 
     $login = loginctrl::getSingleton();
     if ($login->verificarSessaoLogin()) {
-        header("Location:/dashboard.php");
+        header("Location:/dashboard");
         return;
     }
 
@@ -41,7 +41,7 @@
         $utils = phputils::getSingleton();
         $err = urldecode($_GET["err"]);
         if ($utils->checkPhpInjection($err)) {
-            $utils->onRawIndexErr("Php Injection detectado!", "/index.php");
+            $utils->onRawIndexErr("Php Injection detectado!", "/");
             return;
         }
 
@@ -62,7 +62,7 @@
         $utils = phputils::getSingleton();
         $ok = urldecode($_GET["ok"]);
         if ($utils->checkPhpInjection($ok)) {
-            $utils->onRawIndexErr("Php Injection detectado!", "/index.php");
+            $utils->onRawIndexErr("Php Injection detectado!", "/");
             return;
         }
 
