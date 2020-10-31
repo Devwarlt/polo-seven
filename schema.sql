@@ -53,13 +53,13 @@ CREATE TABLE IF NOT EXISTS `pagamentos` (
 
 /* Add table constraints */
 ALTER TABLE `logins`
-  ADD CONSTRAINT `logins_id_usuarios_id` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`);
+  ADD CONSTRAINT `logins_id_usuarios_id` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `vendas`
-  ADD CONSTRAINT `vendas_id_usuario_usuarios_id` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`);
+  ADD CONSTRAINT `vendas_id_usuario_usuarios_id` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `vendas`
-  ADD CONSTRAINT `vendas_id_pagamento_pagamentos_id` FOREIGN KEY (`id_pagamento`) REFERENCES `pagamentos` (`id`);
+  ADD CONSTRAINT `vendas_id_pagamento_pagamentos_id` FOREIGN KEY (`id_pagamento`) REFERENCES `pagamentos` (`id`) ON DELETE CASCADE;
 
 /* Add root user */
 INSERT INTO `usuarios` (`nivel`) VALUES ('1');
