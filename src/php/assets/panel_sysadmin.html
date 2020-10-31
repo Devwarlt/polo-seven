@@ -1,0 +1,128 @@
+<h3 class="card-header">Painel do SysAdmin</h3>
+<br/>
+<div class="container">
+    <div class="card card-body row border-secondary">
+        <div class="col-md-12 text-center">
+            <h4>Ações para Gerente:</h4>
+            <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-outline-success" data-toggle="collapse"
+                        data-target="#criar-gerente" aria-expanded="false" aria-controls="criar-gerente">
+                    <strong>Criar</strong></button>
+                <button type="button" class="btn btn-sm btn-outline-info" data-toggle="collapse"
+                        data-target="#consultar-gerente" aria-expanded="false" aria-controls="consultar-gerente">
+                    <strong>Consultar</strong></button>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="collapse" id="criar-gerente">
+                <div class="container alert alert-success border-success">
+                    <button type="button" class="close" data-toggle="collapse" data-target="#criar-gerente"
+                            aria-expanded="false" aria-controls="criar-gerente">&times;
+                    </button>
+                    <h4>Criar Gerente</h4>
+                    <hr/>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" id="criar-gerente-nome" name="nome"
+                                   placeholder="Nome"/>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="password" class="form-control" id="criar-gerente-senha" name="senha"
+                                   placeholder="Senha"/>
+                            <div class="form-check-inline">
+                                <input class="form-check-input" id="criar-gerente-show-password" type="checkbox"
+                                       onclick="showPassword('criar-gerente-senha')"/>
+                                <label class="form-check-label" for="criar-gerente-show-password">Mostrar senha</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="criar-gerente-btn" type="button" class="btn btn-outline-success"
+                            onclick="criarGerente()">
+                        <strong>Criar</strong></button>
+                    <br/>
+                    <div id="criar-gerente-result"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="collapse" id="consultar-gerente">
+                <div class="container alert alert-info border-info">
+                    <button type="button" class="close" data-toggle="collapse" data-target="#consultar-gerente"
+                            aria-expanded="false" aria-controls="consultar-gerente">&times;
+                    </button>
+                    <h4>Consultar Gerente</h4>
+                    <hr/>
+                    <div class="col-md-12 text-center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-info" data-toggle="collapse"
+                                    data-target="#consultar-gerente-id" aria-expanded="false"
+                                    aria-controls="consultar-gerente-id">
+                                <strong>Por ID</strong></button>
+                            <button type="button" class="btn btn-sm btn-outline-info" data-toggle="collapse"
+                                    data-target="#consultar-gerente-todos" aria-expanded="false"
+                                    aria-controls="consultar-gerente-todos">
+                                <strong>Ver Todos</strong>
+                            </button>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class='row'>
+                        <div class='col'>
+                            <div class='collapse' id='consultar-gerente-id'>
+                                <div class='container alert alert-light border-info'>
+                                    <button type='button' class='close' data-toggle='collapse'
+                                            data-target='#consultar-gerente-id' aria-expanded='false'
+                                            aria-controls='consultar-gerente-id'>&times;
+                                    </button>
+                                    <h4>Por ID</h4>
+                                    <hr/>
+                                    <div class="form-row form-inline">
+                                        <div class="form-group">
+                                            <input type="number" class="form-control" id="consultar-gerente-index"
+                                                   name="index"
+                                                   placeholder="Índice" min="1" step="1"/>
+                                        </div>
+                                        &nbsp;
+                                        <button id="consultar-gerente-id-btn" type="button"
+                                                class="btn btn-outline-primary" onclick="consultarGerenteId()"><strong>Consultar</strong>
+                                        </button>
+                                    </div>
+                                    <hr/>
+                                    <div id="consultar-gerente-id-result"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='row'>
+                        <div class='col'>
+                            <div class='collapse' id='consultar-gerente-todos'>
+                                <div class='container alert alert-light  border-info'>
+                                    <button type='button' class='close' data-toggle='collapse'
+                                            data-target='#consultar-gerente-todos' aria-expanded='false'
+                                            aria-controls='consultar-gerente-todos'>&times;
+                                    </button>
+                                    <h4>Ver Todos</h4>
+                                    <hr/>
+                                    <div class="form-row">
+                                        <button id="consultar-gerente-todos-btn" type="button"
+                                                class="btn btn-outline-primary" onclick="consultarGerenteTodos()">
+                                            <strong>Consultar</strong></button>
+                                    </div>
+                                    <hr/>
+                                    <div id="consultar-gerente-todos-result"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
