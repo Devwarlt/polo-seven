@@ -62,7 +62,7 @@ final class LoginController
         return $result;
     }
 
-    public function criarCredenciais(string $nome, string $senha): array
+    public function criarCredenciais(string $nome, string $senha, int $nivel): array
     {
         $result = array(
             "status" => false,
@@ -81,13 +81,13 @@ final class LoginController
 
         $login = new LoginModel(-1, $nome, $senha, -1);
         $loginDao = LoginDAO::getSingleton();
-        if (($loginDao->consultarLogin($login) !== null)) {
+        if ($loginDao->consultarLogin($login) !== null) {
             $result["err"] = "Já existe um cadastro com esses dados, utilize outra senha se preferir manter o mesmo nome.";
             return $result;
         }
 
         $usrDao = UsuarioDAO::getSingleton();
-        $usr = new UsuarioModel(-1, UsuarioModel::GERENTE);
+        $usr = new UsuarioModel(-1, $nivel);
         if (($id = $usrDao->criarUsuario($usr)) === null) {
             $result["err"] = "Não foi possível criar o usuário!";
             return $result;
