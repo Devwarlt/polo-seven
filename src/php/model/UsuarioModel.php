@@ -36,4 +36,16 @@ final class UsuarioModel
     {
         $this->nivel = $nivel;
     }
+
+    public function nivelDeAcesso(): ?string
+    {
+        if ($this->nivel === self::SYSADMIN)
+            return "SYSADMIN";
+        if ($this->nivel === self::GERENTE)
+            return "GERENTE";
+        if ($this->nivel === self::VENDEDOR)
+            return "VENDEDOR";
+
+        return null;
+    }
 }
