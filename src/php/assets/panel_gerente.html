@@ -11,12 +11,6 @@
                 <button type="button" class="btn btn-sm btn-outline-info" data-toggle="collapse"
                         data-target="#consultar-vendedor" aria-expanded="false" aria-controls="consultar-vendedor">
                     <strong>Consultar</strong></button>
-                <button type="button" class="btn btn-sm btn-outline-warning" data-toggle="collapse"
-                        data-target="#alterar-vendedor" aria-expanded="false" aria-controls="alterar-vendedor"><strong>Alterar</strong>
-                </button>
-                <button type="button" class="btn btn-sm btn-outline-danger" data-toggle="collapse"
-                        data-target="#remover-vendedor" aria-expanded="false" aria-controls="remover-vendedor"><strong>Remover</strong>
-                </button>
             </div>
         </div>
     </div>
@@ -26,13 +20,32 @@
     <div class="row">
         <div class="col">
             <div class="collapse" id="criar-vendedor">
-                <div class="container alert alert-success  border-success">
+                <div class="container alert alert-success border-success">
                     <button type="button" class="close" data-toggle="collapse" data-target="#criar-vendedor"
                             aria-expanded="false" aria-controls="criar-vendedor">&times;
                     </button>
                     <h4>Criar Vendedor</h4>
                     <hr/>
-                    <strong>TO-DO:</strong> criar vendedor form!
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" id="criar-vendedor-nome" name="nome"
+                                   placeholder="Nome"/>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="password" class="form-control" id="criar-vendedor-senha" name="senha"
+                                   placeholder="Senha"/>
+                            <div class="form-check-inline">
+                                <input class="form-check-input" id="criar-vendedor-show-password" type="checkbox"
+                                       onclick="showPassword('criar-vendedor-senha')"/>
+                                <label class="form-check-label" for="criar-vendedor-show-password">Mostrar senha</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="criar-vendedor-btn" type="button" class="btn btn-outline-success"
+                            onclick="criarVendedor()">
+                        <strong>Criar</strong></button>
+                    <hr/>
+                    <div id="criar-vendedor-result"></div>
                 </div>
             </div>
         </div>
@@ -40,41 +53,74 @@
     <div class="row">
         <div class="col">
             <div class="collapse" id="consultar-vendedor">
-                <div class="container alert alert-info  border-info">
+                <div class="container alert alert-info border-info">
                     <button type="button" class="close" data-toggle="collapse" data-target="#consultar-vendedor"
                             aria-expanded="false" aria-controls="consultar-vendedor">&times;
                     </button>
                     <h4>Consultar Vendedor</h4>
                     <hr/>
-                    <strong>TO-DO:</strong> consultar vendedor form!
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="collapse" id="alterar-vendedor">
-                <div class="container alert alert-warning  border-warning">
-                    <button type="button" class="close" data-toggle="collapse" data-target="#alterar-vendedor"
-                            aria-expanded="false" aria-controls="alterar-vendedor">&times;
-                    </button>
-                    <h4>Alterar Vendedor</h4>
-                    <hr/>
-                    <strong>TO-DO:</strong> alterar vendedor form!
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="collapse" id="remover-vendedor">
-                <div class="container alert alert-danger  border-danger">
-                    <button type="button" class="close" data-toggle="collapse" data-target="#remover-vendedor"
-                            aria-expanded="false" aria-controls="remover-vendedor">&times;
-                    </button>
-                    <h4>Remover Vendedor</h4>
-                    <hr/>
-                    <strong>TO-DO:</strong> remover vendedor form!
+                    <div class="col-md-12 text-center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-info" data-toggle="collapse"
+                                    data-target="#consultar-vendedor-id" aria-expanded="false"
+                                    aria-controls="consultar-vendedor-id">
+                                <strong>Por ID</strong></button>
+                            <button type="button" class="btn btn-sm btn-outline-info" data-toggle="collapse"
+                                    data-target="#consultar-vendedor-todos" aria-expanded="false"
+                                    aria-controls="consultar-vendedor-todos">
+                                <strong>Ver Todos</strong>
+                            </button>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class='row'>
+                        <div class='col'>
+                            <div class='collapse' id='consultar-vendedor-id'>
+                                <div class='container alert alert-light border-info'>
+                                    <button type='button' class='close' data-toggle='collapse'
+                                            data-target='#consultar-vendedor-id' aria-expanded='false'
+                                            aria-controls='consultar-vendedor-id'>&times;
+                                    </button>
+                                    <h4>Por ID</h4>
+                                    <hr/>
+                                    <div class="form-row form-inline">
+                                        <div class="form-group">
+                                            <input type="number" class="form-control" id="consultar-vendedor-index"
+                                                   name="index"
+                                                   placeholder="Índice" min="1" step="1"/>
+                                        </div>
+                                        &nbsp;
+                                        <button id="consultar-vendedor-id-btn" type="button"
+                                                class="btn btn-outline-primary" onclick="consultarVendedorId()"><strong>Consultar</strong>
+                                        </button>
+                                    </div>
+                                    <hr/>
+                                    <div id="consultar-vendedor-id-result"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='row'>
+                        <div class='col'>
+                            <div class='collapse' id='consultar-vendedor-todos'>
+                                <div class='container alert alert-light  border-info'>
+                                    <button type='button' class='close' data-toggle='collapse'
+                                            data-target='#consultar-vendedor-todos' aria-expanded='false'
+                                            aria-controls='consultar-vendedor-todos'>&times;
+                                    </button>
+                                    <h4>Ver Todos</h4>
+                                    <hr/>
+                                    <div class="form-row">
+                                        <button id="consultar-vendedor-todos-btn" type="button"
+                                                class="btn btn-outline-primary" onclick="consultarVendedorTodos()">
+                                            <strong>Consultar</strong></button>
+                                    </div>
+                                    <hr/>
+                                    <div id="consultar-vendedor-todos-result"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
