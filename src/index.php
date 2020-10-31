@@ -24,13 +24,13 @@
 
     include "php/controller/LoginController.php";
 
-    use php\controller\LoginController as loginctrl;
+    use php\controller\LoginController;
     use php\PhpUtils as phputils;
 
     session_start();
 
-    $login = loginctrl::getSingleton();
-    if ($login->verificarSessaoLogin()) {
+    $login = LoginController::getSingleton();
+    if ($login->verificarSessao()) {
         header("Location:/dashboard");
         return;
     }
@@ -78,7 +78,7 @@
     }
     ?>
 </div>
-<script type="text/javascript" src="js/jquery-3.5.1.slim.min.js"></script>
+<script type="text/javascript" src="js/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

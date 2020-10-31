@@ -8,8 +8,8 @@
 
 namespace php\dao;
 
-use php\dao\db\MySQLDatabase as mysqldb;
-use php\dao\db\SQLQuery as sqlquery;
+use php\dao\db\MySQLDatabase;
+use php\dao\db\SQLQuery;
 use php\model\ProdutoModel;
 
 final class ProdutoDAO
@@ -29,9 +29,9 @@ final class ProdutoDAO
 
     public function criarProduto(ProdutoModel $produto): bool
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         return $mysql->insert(
-            new sqlquery(
+            new SQLQuery(
                 "INSERT INTO `produtos`(`nome`, `preco_unitario`, `total_unidades`) VALUES (':nome', :preco_unitario, :total_unidades)",
                 [
                     ":nome" => $produto->getNome(),
@@ -43,9 +43,9 @@ final class ProdutoDAO
 
     public function consultarProduto(int $id): ?ProdutoModel
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         $result = $mysql->select(
-            new sqlquery(
+            new SQLQuery(
                 "SELECT * FROM `produtos` WHERE `id` = :id",
                 [":id" => $id]
             )
@@ -65,9 +65,9 @@ final class ProdutoDAO
 
     public function alterarProduto(ProdutoModel $produto): bool
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         return $mysql->update(
-            new sqlquery(
+            new SQLQuery(
                 "UPDATE `produtos` SET `nome` = ':nome', `preco_unitario` = :preco_unitario, `total_unidades` = :total_unidades WHERE `id` = :id",
                 [
                     ":id" => $produto->getId(),
@@ -81,9 +81,9 @@ final class ProdutoDAO
 
     public function removerProduto(int $id): bool
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         return $mysql->delete(
-            new sqlquery(
+            new SQLQuery(
                 "DELETE FROM `produtos` WHERE `id` = :id",
                 [":id" => $id]
             )

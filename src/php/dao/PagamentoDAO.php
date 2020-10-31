@@ -8,8 +8,8 @@
 
 namespace php\dao;
 
-use php\dao\db\MySQLDatabase as mysqldb;
-use php\dao\db\SQLQuery as sqlquery;
+use php\dao\db\MySQLDatabase;
+use php\dao\db\SQLQuery;
 use php\model\PagamentoModel;
 
 final class PagamentoDAO
@@ -29,9 +29,9 @@ final class PagamentoDAO
 
     public function criarPagamento(PagamentoModel $pagamento): bool
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         return $mysql->insert(
-            new sqlquery(
+            new SQLQuery(
                 "INSERT INTO `pagamentos`(`nome`) VALUES (':nome')",
                 [":nome" => $pagamento->getNome()]
             ));
@@ -39,9 +39,9 @@ final class PagamentoDAO
 
     public function consultarPagamento(int $id): ?PagamentoModel
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         $result = $mysql->select(
-            new sqlquery(
+            new SQLQuery(
                 "SELECT * FROM `pagamentos` WHERE `id` = :id",
                 [":id" => $id]
             )
@@ -59,9 +59,9 @@ final class PagamentoDAO
 
     public function alterarPagamento(PagamentoModel $pagamento): bool
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         return $mysql->update(
-            new sqlquery(
+            new SQLQuery(
                 "UPDATE `pagamentos` SET `nome` = ':nome' WHERE `id` = :id",
                 [
                     ":id" => $pagamento->getId(),
@@ -73,9 +73,9 @@ final class PagamentoDAO
 
     public function removerPagamento(int $id): bool
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         return $mysql->delete(
-            new sqlquery(
+            new SQLQuery(
                 "DELETE FROM `pagamentos` WHERE `id` = :id",
                 [":id" => $id]
             )

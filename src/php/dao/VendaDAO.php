@@ -8,8 +8,8 @@
 
 namespace php\dao;
 
-use php\dao\db\MySQLDatabase as mysqldb;
-use php\dao\db\SQLQuery as sqlquery;
+use php\dao\db\MySQLDatabase;
+use php\dao\db\SQLQuery;
 use php\model\VendaModel;
 
 final class VendaDAO
@@ -29,9 +29,9 @@ final class VendaDAO
 
     public function criarVenda(VendaModel $venda): bool
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         return $mysql->insert(
-            new sqlquery(
+            new SQLQuery(
                 "INSERT INTO `vendas`(`id_usuario`, `id_pagamento`, `id_produtos`, `preco_produtos`, `valor`) VALUES (:id_usuario, :id_pagamento, ':id_produtos', ':preco_produtos', :valor)",
                 [
                     ":id_usuario" => $venda->getIdUsuario(),
@@ -45,9 +45,9 @@ final class VendaDAO
 
     public function consultarVenda(int $id): ?VendaModel
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         $result = $mysql->select(
-            new sqlquery(
+            new SQLQuery(
                 "SELECT * FROM `vendas` WHERE `id` = :id",
                 [":id" => $id]
             )
@@ -70,9 +70,9 @@ final class VendaDAO
 
     public function alterarVenda(VendaModel $venda): bool
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         return $mysql->update(
-            new sqlquery(
+            new SQLQuery(
                 "UPDATE `vendas` SET `id_usuario` = :id_usuario, `id_pagamento` = :id_pagamento, `id_produtos` = ':id_produtos', `preco_produtos` = ':preco_produtos', `valor` = :valor, `data_registro` = CURRENT_TIMESTAMP WHERE `id` = :id",
                 [
                     ":id" => $venda->getId(),
@@ -88,9 +88,9 @@ final class VendaDAO
 
     public function removerVenda(int $id): bool
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         return $mysql->delete(
-            new sqlquery(
+            new SQLQuery(
                 "DELETE FROM `vendas` WHERE `id` = :id",
                 [":id" => $id]
             )
