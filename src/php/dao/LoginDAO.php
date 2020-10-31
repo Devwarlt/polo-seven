@@ -88,7 +88,7 @@ final class LoginDAO
         return $registered;
     }
 
-    public function alterarPagamento(LoginModel $login): bool
+    public function alterarLogin(LoginModel $login): bool
     {
         $mysql = MySQLDatabase::getSingleton();
         return $mysql->update(
@@ -99,6 +99,17 @@ final class LoginDAO
                     ":nome" => $login->getNome(),
                     ":senha" => $login->getSenha()
                 ]
+            )
+        );
+    }
+
+    public function removerLogin(int $id): bool
+    {
+        $mysql = MySQLDatabase::getSingleton();
+        return $mysql->delete(
+            new SQLQuery(
+                "DELETE FROM `logins` WHERE `id` = :id",
+                [":id" => $id]
             )
         );
     }
