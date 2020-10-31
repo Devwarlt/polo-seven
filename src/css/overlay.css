@@ -1,0 +1,67 @@
+:root {
+    /* backgrounds */
+    --ws-background-color-1: #000000;
+    --ws-background-color-1-overlay: #000000AB;
+    --ws-background-color-2: #121212;
+    --ws-background-color-2-overlay: #121212AB;
+    --ws-background-color-3: #242424;
+    --ws-background-color-3-overlay: #242424AB;
+    --ws-background-color-4: #363636;
+    --ws-background-color-4-overlay: #363636AB;
+    --ws-background-color-5: #484848;
+    --ws-background-color-5-overlay: #484848AB;
+    --ws-background-color-6: #565656;
+    --ws-background-color-6-overlay: #565656AB;
+    --ws-background-color-7: #646464;
+    --ws-background-color-7-overlay: #646464AB;
+}
+
+.overlay {
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--ws-background-color-2-overlay);
+}
+
+.overlay-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+}
+
+.overlay-loading {
+    color: #b0b0b0;
+    height: 0;
+    width: 100%;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    background-color: var(--ws-background-color-2-overlay);
+    overflow-x: hidden;
+    transition: 0.75s;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.no-select {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+.table-result {
+    padding: 1px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
