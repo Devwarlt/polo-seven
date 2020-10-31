@@ -8,8 +8,9 @@
 
 namespace php\dao;
 
-use php\dao\db\MySQLDatabase as mysqldb;
-use php\dao\db\SQLQuery as sqlquery;
+use php\dao\db\MySQLDatabase;
+use php\dao\db\SQLQuery;
+use php\model\LoginModel;
 use php\model\UsuarioModel;
 
 final class UsuarioDAO
@@ -27,21 +28,29 @@ final class UsuarioDAO
         return self::$singleton;
     }
 
-    public function criarUsuario(UsuarioModel $usuario): bool
+    public function criarUsuario(UsuarioModel $usuario): ?int
     {
-        $mysql = mysqldb::getSingleton();
-        return $mysql->insert(
-            new sqlquery(
+        $mysql = MySQLDatabase::getSingleton();
+        if (!$mysql->select(
+            new SQLQuery(
                 "INSERT INTO `usuarios`(`nivel`) VALUES (:nivel)",
                 [":nivel" => $usuario->getNivel()]
-            ));
+            )))
+            return null;
+
+        $result = $mysql->select(new SQLQuery("SELECT LAST_INSERT_ID() AS `id`"));
+        if ($result === null)
+            return null;
+
+        $data = $result->fetch(\PDO::FETCH_OBJ);
+        return $data->id;
     }
 
     public function consultarUsuario(int $id): ?UsuarioModel
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         $result = $mysql->select(
-            new sqlquery(
+            new SQLQuery(
                 "SELECT * FROM `usuarios` WHERE `id` = :id",
                 [":id" => $id]
             )
@@ -57,11 +66,65 @@ final class UsuarioDAO
         return $usuario;
     }
 
+    public function consultarUsuarioPorNivel(int $id, int $nivel): ?UsuarioModel
+    {
+        $mysql = MySQLDatabase::getSingleton();
+        $result = $mysql->select(
+            new SQLQuery(
+                "SELECT * FROM `usuarios` WHERE `id` = :id AND `nivel` = :nivel",
+                [
+                    ":id" => $id,
+                    ":nivel" => $nivel
+                ]
+            )
+        );
+        if ($result === null)
+            return null;
+
+        $data = $result->fetch(\PDO::FETCH_OBJ);
+        $usuario = new UsuarioModel(
+            $data->id,
+            $data->nivel
+        );
+        return $usuario;
+    }
+
+    public function consultarUsuariosPorNivel(int $nivel): ?array
+    {
+        $mysql = MySQLDatabase::getSingleton();
+        $result = $mysql->select(
+            new SQLQuery(
+                "SELECT `logins`.*, `usuarios`.`nivel` FROM `logins` INNER JOIN `usuarios` ON `logins`.`id_usuario` = `usuarios`.`id` AND `usuarios`.`nivel` = :nivel",
+                [":nivel" => $nivel]
+            )
+        );
+        if ($result === null)
+            return null;
+
+        $collection = array();
+        while ($data = $result->fetch(\PDO::FETCH_OBJ))
+            array_push($collection,
+                array(
+                    "usr" => new UsuarioModel(
+                        $data->id_usuario,
+                        $data->nivel
+                    ),
+                    "login" => new LoginModel(
+                        $data->id,
+                        $data->nome,
+                        $data->senha,
+                        $data->id_usuario
+                    )
+                )
+            );
+        return $collection;
+    }
+
     public function alterarUsuario(UsuarioModel $usuario): bool
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         return $mysql->update(
-            new sqlquery(
+            new SQLQuery(
                 "UPDATE `usuarios` SET `nivel` = :nivel WHERE `id` = :id",
                 [
                     ":id" => $usuario->getId(),
@@ -73,9 +136,9 @@ final class UsuarioDAO
 
     public function removerUsuario(int $id): bool
     {
-        $mysql = mysqldb::getSingleton();
+        $mysql = MySQLDatabase::getSingleton();
         return $mysql->delete(
-            new sqlquery(
+            new SQLQuery(
                 "DELETE FROM `usuarios` WHERE `id` = :id",
                 [":id" => $id]
             )
