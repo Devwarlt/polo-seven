@@ -31,7 +31,7 @@ final class UsuarioDAO
     public function criarUsuario(UsuarioModel $usuario): ?int
     {
         $mysql = MySQLDatabase::getSingleton();
-        if (!$mysql->select(
+        if (!$mysql->insert(
             new SQLQuery(
                 "INSERT INTO `usuarios`(`nivel`) VALUES (:nivel)",
                 [":nivel" => $usuario->getNivel()]
