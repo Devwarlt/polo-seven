@@ -13,20 +13,20 @@ include "php/model/UsuarioModel.php";
 include "php/model/VendaModel.php";
 include "php/view/DashboardView.php";
 
-use php\controller\LoginController as loginctrl;
-use php\dao\UsuarioDAO as usuario;
-use php\PhpUtils as utils;
+use php\controller\LoginController;
+use php\dao\UsuarioDAO;
+use php\PhpUtils;
 
 session_start();
 
-$utils = utils::getSingleton();
-$login = loginctrl::getSingleton();
-if (!$login->verificarSessaoLogin()) {
+$utils = PhpUtils::getSingleton();
+$login = LoginController::getSingleton();
+if (!$login->verificarSessao()) {
     $utils->onRawIndexErr("É necessário realizar login!", "/");
     return;
 }
 
-$userDao = usuario::getSingleton();
+$userDao = UsuarioDAO::getSingleton();
 $user = $userDao->consultarUsuario($_SESSION[LOGIN_ID]);
 if ($user === null) {
     $utils->onRawIndexErr("Usuário não encontrado!", "/");
@@ -41,6 +41,7 @@ $view = new \php\view\DashboardView($user);
     <meta charset="UTF-8">
     <title>Polo Seven - Dashboard</title>
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/overlay.css?t=<?php echo time(); ?>"/>
 </head>
 <body style="height: 100%;" class="alert-light">
 <table class="table" border="0" width="100%">
@@ -59,10 +60,19 @@ $view = new \php\view\DashboardView($user);
         </td>
     </tr>
 </table>
-<?php
-$view->criarPaineisAdministrativos();
-?>
+<?php $view->adicionarElementosHTML(); ?>
+<div id="loading" class="overlay-loading text-center">
+    <img src="/media/loading.gif" width="32" height="32"/>
+    &nbsp;
+    <strong class="no-select">Carregando, por favor aguarde...</strong>
+</div>
 </body>
-<script type="text/javascript" src="js/jquery-3.5.1.slim.min.js"></script>
+<script type="text/javascript" src="js/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+<?php $view->adicionarScriptsJS(); ?>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#loading").height("0%");
+    });
+</script>
 </html>
