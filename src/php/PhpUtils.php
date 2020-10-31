@@ -8,7 +8,6 @@
 
 namespace php;
 
-
 final class PhpUtils
 {
     private static $php_injection_regex_pattern = '/^(?=.*<\?)|(?=.*\?>).*$/';
@@ -45,5 +44,14 @@ final class PhpUtils
     public function checkPhpInjection(string $str): bool
     {
         return preg_match(self::$php_injection_regex_pattern, $str);
+    }
+
+    public function getContents(string $path): string
+    {
+        $file = dirname(__FILE__) . $path;
+        if (!file_exists($file))
+            return "<p style='color: red'><strong>Arquivo não encontrado:</strong> " . dirname(__FILE__) . "$path</p>";
+
+        return file_get_contents($file);
     }
 }
