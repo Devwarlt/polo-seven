@@ -8,8 +8,8 @@
 
 namespace php\dao;
 
-use php\dao\db\MySQLDatabase as mysqldb;
-use php\dao\db\SQLQuery as sqlquery;
+use php\dao\db\MySQLDatabase;
+use php\dao\db\SQLQuery;
 use php\model\LoginModel;
 
 final class LoginDAO
@@ -27,28 +27,79 @@ final class LoginDAO
         return self::$singleton;
     }
 
-    public function consultarLogin(string $nome, string $senha): ?LoginModel
+    public function criarLogin(LoginModel $login, int $id_usuario): bool
     {
-        $mysql = mysqldb::getSingleton();
-        $result = $mysql->select(
-            new sqlquery(
-                "SELECT `id` FROM `logins` WHERE `nome` = ':nome' AND `senha` = ':senha'",
+        $mysql = MySQLDatabase::getSingleton();
+        return $mysql->insert(
+            new SQLQuery(
+                "INSERT INTO `logins`(`nome`, `senha`, `id_usuario`) VALUES (':nome', ':senha', :id_usuario)",
                 [
-                    ":nome" => $nome,
-                    ":senha" => $senha
+                    ":nome" => $login->getNome(),
+                    ":senha" => $login->getSenha(),
+                    ":id_usuario" => $id_usuario
                 ]
+            ));
+    }
+
+    public function consultarLoginId(int $id): ?LoginModel
+    {
+        $mysql = MySQLDatabase::getSingleton();
+        $result = $mysql->select(
+            new SQLQuery(
+                "SELECT * FROM `logins` WHERE `id` = :id",
+                [":id" => $id]
             )
         );
-
         if ($result === null)
             return null;
 
         $data = $result->fetch(\PDO::FETCH_OBJ);
-        $login = new LoginModel(
-            $data->id,
-            $nome,
-            $senha
+        $registered = new LoginModel(
+            $id,
+            $data->nome,
+            $data->senha,
+            $data->id_usuario
         );
-        return $login;
+        return $registered;
+    }
+
+    public function consultarLogin(LoginModel $login): ?LoginModel
+    {
+        $mysql = MySQLDatabase::getSingleton();
+        $result = $mysql->select(
+            new SQLQuery(
+                "SELECT * FROM `logins` WHERE `nome` = ':nome' AND `senha` = ':senha'",
+                [
+                    ":nome" => $login->getNome(),
+                    ":senha" => $login->getSenha()
+                ]
+            )
+        );
+        if ($result === null)
+            return null;
+
+        $data = $result->fetch(\PDO::FETCH_OBJ);
+        $registered = new LoginModel(
+            $data->id,
+            $login->getNome(),
+            $login->getSenha(),
+            $data->id_usuario
+        );
+        return $registered;
+    }
+
+    public function alterarPagamento(LoginModel $login): bool
+    {
+        $mysql = MySQLDatabase::getSingleton();
+        return $mysql->update(
+            new SQLQuery(
+                "UPDATE `logins` SET `nome` = ':nome', `senha` = ':senha' WHERE `id` = :id",
+                [
+                    ":id" => $login->getId(),
+                    ":nome" => $login->getNome(),
+                    ":senha" => $login->getSenha()
+                ]
+            )
+        );
     }
 }
