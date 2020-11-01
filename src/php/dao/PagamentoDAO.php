@@ -57,6 +57,44 @@ final class PagamentoDAO
         return $pagamento;
     }
 
+    public function consultarPagamentoNome(string $nome): ?PagamentoModel
+    {
+        $mysql = MySQLDatabase::getSingleton();
+        $result = $mysql->select(
+            new SQLQuery(
+                "SELECT * FROM `pagamentos` WHERE `nome` = ':nome'",
+                [":nome" => $nome]
+            )
+        );
+        if ($result === null)
+            return null;
+
+        $data = $result->fetch(\PDO::FETCH_OBJ);
+        $pagamento = new PagamentoModel(
+            $data->id,
+            $data->nome
+        );
+        return $pagamento;
+    }
+
+    public function consultarPagamentos(): ?array
+    {
+        $mysql = MySQLDatabase::getSingleton();
+        $result = $mysql->select(new SQLQuery("SELECT * FROM `pagamentos`"));
+        if ($result === null)
+            return null;
+
+        $collection = array();
+        while ($data = $result->fetch(\PDO::FETCH_OBJ))
+            array_push($collection,
+                new PagamentoModel(
+                    $data->id,
+                    $data->nome
+                )
+            );
+        return $collection;
+    }
+
     public function alterarPagamento(PagamentoModel $pagamento): bool
     {
         $mysql = MySQLDatabase::getSingleton();
