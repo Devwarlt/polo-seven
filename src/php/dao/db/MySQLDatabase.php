@@ -38,7 +38,32 @@ final class MySQLDatabase
     private function dml(string $sql): bool
     {
         $query = self::$connection->prepare($sql);
-        return $query->execute();
+        if ($query->execute())
+            return true;
+        else {
+            $this->displayPDOError($query);
+            return false;
+        }
+    }
+
+    private function displayPDOError(\PDOStatement $query): void
+    {
+        echo "
+        <div class='card text-white bg-danger' style='padding: 4px; width: 100%'>
+            <div class='text-warning card-header'><strong><span class='glyphicon glyphicon-alert' aria-hidden='true'></span>&nbsp;&nbsp;<u>Query error detected!</u></strong></div>
+            <div class='card-body'>
+                <h5>Query:</h5>&nbsp;
+                <code class='text-warning bg-dark border-warning rounded'>&nbsp;" . $query->queryString . "&nbsp;</code>            
+            </div>
+            <div class='card-footer'>
+                <h5>PDO::errorInfo():</h5>
+                <p><small><strong>&blacktriangleright;&nbsp;SQLSTATE Error Code:</strong> " . $query->errorInfo()[0] . "</small></p>
+                <p><small><strong>&blacktriangleright;&nbsp;Driver-specific Error Code:</strong> " . $query->errorInfo()[1] . "</small></p>
+                <p><small><strong>&blacktriangleright;&nbsp;Driver-specific Error Message:</strong> " . $query->errorInfo()[2] . "</small></p>
+            </div>
+        </div>
+        <hr/>
+        ";
     }
 
     public function delete(SQLQuery $query): bool
@@ -61,6 +86,8 @@ final class MySQLDatabase
         $query = self::$connection->query($sql);
         if ($query->execute() && $query->rowCount() > 0)
             return $query;
+
+        $this->displayPDOError($query);
         return null;
     }
 }

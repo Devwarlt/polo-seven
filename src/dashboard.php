@@ -47,6 +47,7 @@ $view = new \php\view\DashboardView($user);
     <title>Polo Seven - Dashboard</title>
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/overlay.css?t=<?php echo time(); ?>"/>
+    <link rel="stylesheet" href="css/glyphicons.css?t=<?php echo time(); ?>"/>
 </head>
 <body style="height: 100%;" class="alert-light">
 <table class="table" border="0" width="100%">
@@ -291,7 +292,7 @@ if ($user->getNivel() === UsuarioModel::GERENTE || $user->getNivel() === Usuario
             </div>
             <div class="form-group col-md-6">
                 <button type="button" id="criar-venda-id-produtos-btn" class="btn btn-outline-success"
-                        onclick="adicionarItemProduto()">
+                        onclick="adicionarItemProduto(\'criar\')">
                     Adicionar
                 </button>
             </div>

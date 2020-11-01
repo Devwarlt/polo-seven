@@ -96,9 +96,9 @@ final class VendaDAO
         $mysql = MySQLDatabase::getSingleton();
         return $mysql->update(
             new SQLQuery(
-                "UPDATE `vendas` SET `id_usuario` = :id_usuario, `id_pagamento` = :id_pagamento, `id_produtos` = ':id_produtos', `preco_produtos` = ':preco_produtos', `valor` = :valor, `data_registro` = CURRENT_TIMESTAMP WHERE `id` = :id",
+                "UPDATE `vendas` SET `id_usuario` = :id_usuario, `id_pagamento` = :id_pagamento, `id_produtos` = ':id_produtos', `preco_produtos` = ':preco_produtos', `valor` = :valor, `data_registro` = CURRENT_TIMESTAMP WHERE `id` = :id__",
                 [
-                    ":id" => $venda->getId(),
+                    ":id__" => $venda->getId(),
                     ":id_usuario" => $venda->getIdUsuario(),
                     ":id_pagamento" => $venda->getIdPagamento(),
                     ":id_produtos" => implode(',', $venda->getIdProdutos()),

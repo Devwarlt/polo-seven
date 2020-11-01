@@ -1,3 +1,6 @@
+pIdCriar = 0;
+pIdAlterar = 0;
+
 function criarVenda() {
     var id_produtos = "";
 
@@ -35,7 +38,7 @@ function criarVenda() {
                 $("#criar-venda-id-pagamento")[0].selectedIndex = 0;
                 $("#criar-venda-id-produtos-container").html("");
 
-                pId = 0;
+                pIdCriar = 0;
             }
 
             $("#criar-venda-btn").attr("disabled", false);
@@ -91,16 +94,24 @@ function consultarVendaTodos() {
 }
 
 function alterarVenda() {
+    var id_produtos = "";
+
+    $("input:hidden[id^='alterar-venda-id-produtos-']").each(function () {
+        id_produtos = id_produtos.concat($(this).attr("value") + ",");
+    });
+
+    if (id_produtos.substr(id_produtos.length - 1) === ",")
+        id_produtos = id_produtos.slice(0, -1);
+
     sendRequestAsync({
         action: action,
         controller: "dashboard",
         operation: "alterar-venda",
         args: {
             id: $(":hidden#alterar-venda-id").val(),
-            nome: $("#alterar-venda-nome").val(),
-            senha: $("#alterar-venda-senha").val(),
-            id_usuario: $(":hidden#alterar-venda-id-usuario").val(),
-            nivel: $("#alterar-venda-nivel option:selected")[0].getAttribute("value")
+            id_usuario: $("#alterar-venda-id-usuario").val(),
+            id_pagamento: $("#alterar-venda-id-pagamento").val(),
+            id_produtos: id_produtos
         },
         onBegin: function () {
             $("#alterar-venda-btn").attr("disabled", true);
@@ -115,8 +126,10 @@ function alterarVenda() {
             );
         },
         onFinished: function (data) {
-            if (!data.includes("sucesso"))
-                $("#alterar-venda-btn").attr("disabled", false);
+            if (data.includes("sucesso"))
+                pIdAlterar = 0;
+
+            $("#alterar-venda-btn").attr("disabled", false);
         }
     });
 }
@@ -149,29 +162,43 @@ function removerVenda() {
     });
 }
 
-pId = 0;
+function adicionarItemProduto(label) {
+    var pId = label === "criar"
+        ? pIdCriar
+        : label === "alterar"
+            ? pIdAlterar
+            : undefined;
 
-function adicionarItemProduto() {
-    var btn = $("#criar-venda-id-produtos-btn");
+    if (pId === undefined) {
+        console.log("Label não suportada! -> label: " + label);
+        return;
+    }
+
+    var btn = $("#" + label + "-venda-id-produtos-btn");
     btn.attr("disabled", true);
-    $("#criar-venda-id-produtos-select option:selected").each(function () {
-        $("#criar-venda-id-produtos-container").append(
-            "<div id='criar-venda-id-produtos-div-" + ++pId + "' class='card text-white bg-success'/>" +
-            "<input type='hidden' id='criar-venda-id-produtos-" + pId + "' value='" + $(this).val() + "'/>" +
-            "<button class='close' style='margin: 4px' data-toggle='collapse' data-target='criar-venda-id-produtos-div-" + pId + "' " +
-            "aria-expanded='false' aria-controls='criar-venda-id-produtos-div-" + pId + "' " +
-            "onclick='removerItemProduto(" + pId + ")'>&times;</button>" +
+    $("#" + label + "-venda-id-produtos-select option:selected").each(function () {
+        $("#" + label + "-venda-id-produtos-container").append(
+            "<div id='" + label + "-venda-id-produtos-div-" + ++pId + "' class='card text-white bg-success'>" +
+            "<input type='hidden' id='" + label + "-venda-id-produtos-" + pId + "' value='" + $(this).val() + "'/>" +
+            "<button class='close' style='margin: 4px' data-toggle='collapse' data-target='" + label + "-venda-id-produtos-div-" + pId + "' " +
+            "aria-expanded='false' aria-controls='" + label + "-venda-id-produtos-div-" + pId + "' " +
+            "onclick='removerItemProduto('" + label + "', " + pId + ")'>&times;</button>" +
             "<div class='card-body'>" +
             "<p class='card-text'>" + $(this).text() + "</p>" +
             "</div></div>"
         );
     });
     btn.attr("disabled", false);
+
+    if (label === "criar")
+        pIdCriar = pId;
+    else
+        pIdAlterar = pId;
 }
 
-function removerItemProduto(id) {
-    var btn = $("#criar-venda-id-produtos-btn");
+function removerItemProduto(label, id) {
+    var btn = $("#" + label + "-venda-id-produtos-btn");
     btn.attr("disabled", true);
-    $("#criar-venda-id-produtos-div-" + id).remove();
+    $("#" + label + "-venda-id-produtos-div-" + id).remove();
     btn.attr("disabled", false);
 }

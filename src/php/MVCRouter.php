@@ -16,6 +16,9 @@ use php\model\PagamentoModel;
 use php\model\VendaModel;
 use php\controller\LoginController;
 use php\dao\UsuarioDAO;
+use php\dao\LoginDAO;
+use php\dao\ProdutoDAO;
+use php\dao\PagamentoDAO;
 use php\PhpUtils;
 
 $utils = PhpUtils::getSingleton();
@@ -984,7 +987,7 @@ switch ($controller) {
                         $dash = DashboardController::getSingleton();
                         $response = $dash->consultarPagamentoId($_POST["id"]);
                         if ($response["status"]) {
-                            $pagamento = $response["produto"];
+                            $pagamento = $response["pagamento"];
                             echo "
                             <div class='card bg-info'>
                                 <div class='table-responsive'>
@@ -998,7 +1001,7 @@ switch ($controller) {
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <th scope='row'>" . $produto->getId() . "</th>
+                                                <th scope='row'>" . $pagamento->getId() . "</th>
                                                 <td>" . $pagamento->getNome() . "</td>
                                                 <td>
                                                     <div class='text-center'>
@@ -1209,7 +1212,7 @@ switch ($controller) {
                         $dash = DashboardController::getSingleton();
                         $id_produtos = array();
                         if (isset($_POST["id_produtos"])) {
-                            if (!strpos($_POST["id_produtos"], ","))
+                            if (strpos($_POST["id_produtos"], ",") !== false)
                                 $id_produtos = explode(",", $_POST["id_produtos"]);
                             else
                                 array_push($id_produtos, $_POST["id_produtos"]);
@@ -1218,13 +1221,11 @@ switch ($controller) {
                         $preco_produtos = array();
                         $valor = 0;
                         if (isset($id_produtos))
-                            foreach ($id_produtos as $id_produto) {
-                                $result = $dash->consultarProdutoId(intval($id_produto));
-                                if ($result["status"]) {
-                                    $valor += $result["produto"]->getPrecoUnitario();
+                            foreach ($id_produtos as $id_produto)
+                                if (($result = $dash->consultarProdutoId(intval($id_produto)))["status"]) {
+                                    $valor += floatval($result["produto"]->getPrecoUnitario());
                                     array_push($preco_produtos, $result["produto"]->getPrecoUnitario());
                                 }
-                            }
 
                         $venda = new VendaModel(
                             -1,
@@ -1261,9 +1262,80 @@ switch ($controller) {
 
                         $dash = DashboardController::getSingleton();
                         $response = $dash->consultarVendaId($_POST["id"]);
-                        // todo: continue working on this tomorrow
                         if ($response["status"]) {
                             $venda = $response["venda"];
+
+                            $usrDao = UsuarioDAO::getSingleton();
+                            $loginDao = LoginDAO::getSingleton();
+                            $produtoDao = ProdutoDAO::getSingleton();
+                            $pagamentoDao = PagamentoDAO::getSingleton();
+
+                            $usr = $usrDao->consultarUsuario($venda->getIdUsuario());
+                            $usrNome = $usr === null
+                                ? "<strong class='text-danger'>Usuário Desconhecido</strong>"
+                                : ($login = $loginDao->consultarLoginId($usr->getId())) === null
+                                    ? "<strong class='text-danger'>Usuário Desconhecido</strong>"
+                                    : $login->getNome();
+
+                            $pagamento = $pagamentoDao->consultarPagamento($venda->getIdPagamento());
+                            $pagamentoNome = $pagamento === null
+                                ? "<strong class='text-danger'>Pagamento Desconhecido</strong>"
+                                : $pagamento->getNome();
+
+                            $produtos = null;
+                            $produtos_alt = null;
+                            $pId = 0;
+                            if (sizeof(($id_produtos = $venda->getIdProdutos())) > 0) {
+                                $produtos = $produtos_alt = "";
+                                foreach ($id_produtos as $id_produto)
+                                    if (($result = $dash->consultarProdutoId(intval($id_produto)))["status"]) {
+                                        $produtos .= "<span class='badge badge-primary'>" . $result["produto"]->getNome() . "</span>&nbsp;";
+                                        $produtos_alt .= "
+                                        <div id='alterar-venda-id-produtos-div-" . ++$pId . "' class='card text-white bg-success'>
+                                            <input type='hidden' id='alterar-venda-id-produtos-" . $pId . "' value='" . $id_produto . "'/>
+                                            <button class='close' style='margin: 4px' data-toggle='collapse' data-target='alterar-venda-id-produtos-div-" . $pId . "' 
+                                                    aria-expanded='false' aria-controls='alterar-venda-id-produtos-div-" . $pId . "' 
+                                                    onclick='removerItemProduto(\"alterar\", " . intval($id_produto) . ")'>&times;</button>
+                                            <div class='card-body'>
+                                                <p class='card-text'>" . $result["produto"]->getNome() . "</p>
+                                            </div>
+                                        </div>
+                                        ";
+                                    }
+                            }
+
+                            $select_usuarios = "";
+                            $gerentes = $usrDao->consultarUsuariosPorNivel(UsuarioModel::GERENTE);
+                            foreach ($gerentes as $gerente) {
+                                $selected = $venda->getIdUsuario() === $gerente["login"]->getNome();
+                                $select_usuarios .= "<option value='" . $gerente["usr"]->getId() . "'" . ($selected ? " selected" : "") . ">" . $gerente["login"]->getNome() . "</option>";
+                            }
+
+                            $vendedores = $usrDao->consultarUsuariosPorNivel(UsuarioModel::VENDEDOR);
+                            foreach ($vendedores as $vendedor) {
+                                $selected = $venda->getIdUsuario() === $vendedor["login"]->getNome();
+                                $select_usuarios .= "<option value='" . $vendedor["usr"]->getId() . "'" . ($selected ? " selected" : "") . ">" . $vendedor["login"]->getNome() . "</option>";
+                            }
+
+                            if (strlen($select_usuarios) == 0)
+                                $select_usuarios = "<option value='-1' disabled>Nenhum usuário!</option>";
+
+                            $select_pagamentos = "";
+                            $pagamentos = $pagamentoDao->consultarPagamentos();
+                            foreach ($pagamentos as $pagamento) {
+                                $selected = $venda->getIdPagamento() === $pagamento->getId();
+                                $select_pagamentos .= "<option value='" . $pagamento->getId() . "'" . ($selected ? " selected" : "") . ">" . $pagamento->getNome() . "</option>";
+                            }
+
+                            if (strlen($select_pagamentos) == 0)
+                                $select_pagamentos = "<option value='-1' disabled>Nenhum pagamento!</option>";
+
+                            $select_produtos = "";
+                            foreach ($produtoDao->consultarProdutos() as $produto)
+                                $select_produtos .= "<option value='" . $produto->getId() . "'>" . $produto->getNome() . "</option>";
+
+                            if (strlen($select_pagamentos) == 0)
+                                $select_produtos = "<option value='-1' disabled>Nenhum produto!</option>";
                             echo "
                             <div class='card bg-info'>
                                 <div class='table-responsive'>
@@ -1273,7 +1345,7 @@ switch ($controller) {
                                                 <th scope='col'>ID</th>
                                                 <th scope='col'>Usuário</th>
                                                 <th scope='col'>Pagamento</th>
-                                                <th scope='col'>Produtos</th>
+                                                <th scope='col' style='width: 35%'>Produtos</th>
                                                 <th scope='col'>Valor</th>
                                                 <th scope='col'>Data Registro</th>
                                                 <th scope='col'>Ações</th>
@@ -1281,8 +1353,12 @@ switch ($controller) {
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <th scope='row'>" . $produto->getId() . "</th>
-                                                <td>" . $venda->getNome() . "</td>
+                                                <th scope='row'>" . $venda->getId() . "</th>
+                                                <td>" . $usrNome . "</td>
+                                                <td>" . $pagamentoNome . "</td>
+                                                <td>" . $produtos . "</td>
+                                                <td>" . $venda->getValor() . "</td>
+                                                <td>" . $venda->getDataRegistro() . "</td>
                                                 <td>
                                                     <div class='text-center'>
                                                         <div class='btn-group'>
@@ -1303,7 +1379,7 @@ switch ($controller) {
                             <hr/>
                             <div class='row'>
                                 <div class='col'>
-                                    <div class='collapse' id='alterar-pagamento'>
+                                    <div class='collapse' id='alterar-venda'>
                                         <div class='container alert alert-warning border-warning'>
                                             <button type='button' class='close' data-toggle='collapse' data-target='#alterar-pagamento'
                                                     aria-expanded='false' aria-controls='alterar-pagamento'>&times;
@@ -1311,48 +1387,68 @@ switch ($controller) {
                                             <h4>Alterar Pagamento</h4>
                                             <hr/>
                                             <div class='form-row'>
-                                                <div class='form-group col-md-12'>
-                                                    <input type='text' class='form-control' id='alterar-pagamento-nome' name='nome'
-                                                           placeholder='Nome' value='" . $pagamento->getNome() . "'/>
+                                                <div class='form-group col-md-6'>
+                                                    <select class='form-control' id='alterar-venda-id-usuario'>
+                                                    " . $select_usuarios . "
+                                                    </select>
+                                                </div>
+                                                <div class='form-group col-md-6'>
+                                                    <select class='form-control' id='alterar-venda-id-pagamento'>
+                                                    " . $select_pagamentos . "
+                                                    </select>
+                                                </div>
+                                                <div class='form-group col-md-6'>
+                                                    <select multiple class='form-control' id='alterar-venda-id-produtos-select'>
+                                                    " . $select_produtos . "
+                                                    </select>
+                                                </div>
+                                                <div class='form-group col-md-6'>
+                                                    <button type='button' id='alterar-venda-id-produtos-btn' class='btn btn-outline-success'
+                                                        onclick='adicionarItemProduto(\"alterar\")'>
+                                                        Adicionar
+                                                    </button>
+                                                </div>
+                                                <div class='card-columns col-md-12' id='alterar-venda-id-produtos-container'>
+                                                    " . $produtos_alt . "
                                                 </div>
                                             </div>
-                                            <input type='hidden' id='alterar-pagamento-id' value='" . $pagamento->getId() . "'/>
-                                            <button id='alterar-pagamento-btn' type='button' class='btn btn-outline-warning'
-                                                    onclick='alterarPagamento()'>
+                                            <input type='hidden' id='alterar-venda-id' value='" . $venda->getId() . "'/>
+                                            <button id='alterar-venda-btn' type='button' class='btn btn-outline-warning'
+                                                    onclick='alterarVenda()'>
                                                 <strong>Alterar</strong></button>
                                             <hr/>
-                                            <div id='alterar-pagamento-result'></div>
+                                            <div id='alterar-venda-result'></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class='row'>
                                 <div class='col'>
-                                    <div class='collapse' id='remover-pagamento'>
+                                    <div class='collapse' id='remover-venda'>
                                         <div class='container alert alert-danger border-danger'>
-                                            <button type='button' class='close' data-toggle='collapse' data-target='#remover-pagamento'
-                                                    aria-expanded='false' aria-controls='remover-pagamento'>&times;
+                                            <button type='button' class='close' data-toggle='collapse' data-target='#remover-venda'
+                                                    aria-expanded='false' aria-controls='remover-venda'>&times;
                                             </button>
-                                            <h4>Remover Pagamento</h4>
+                                            <h4>Remover Venda</h4>
                                             <hr/>
                                             <p align='justify'>
-                                                Você realmente deseja remover o pagamento <strong>" . $pagamento->getNome() . "</strong>?
+                                                Você realmente deseja remover esta venda?
                                             </p>
                                             <br/>
-                                            <input type='hidden' id='remover-pagamento-id' value='" . $pagamento->getId() . "'/>
+                                            <input type='hidden' id='remover-venda-id' value='" . $venda->getId() . "'/>
                                             <div class='text-center'>
                                                 <div class='form-group col-md-12'>
-                                                    <button id='remover-pagamento-btn' type='button' class='btn btn-lg btn-outline-success'
-                                                            onclick='removerPagamento()'>
+                                                    <button id='remover-venda-btn' type='button' class='btn btn-lg btn-outline-success'
+                                                            onclick='removerVenda()'>
                                                         <strong>Sim</strong></button>
                                                     &nbsp;
                                                     <button type='button' class='btn btn-lg btn-outline-danger' data-toggle='collapse'
-                                                            data-target='#remover-pagamento' aria-expanded='false' aria-controls='remover-pagamento'>
+                                                            data-target='#remover-venda' aria-expanded='false' aria-controls='remover-venda'>
                                                         <strong>Não</strong></button>
                                                 </div>
                                             </div>
                                             <hr/>
-                                            <div id='remover-pagamento-result'></div>
+                                            <div id='remover-venda-result'></div>
                                         </div>
                                     </div>
                                 </div>
@@ -1360,7 +1456,177 @@ switch ($controller) {
                             ";
                         } else
                             echo "
-                            Algo errado aconteceu durante a consulta do pagamento!
+                            Algo errado aconteceu durante a consulta da venda!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "consultar-venda-todos":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo "É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!";
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $response = $dash->consultarVendas();
+                        if ($response["status"]) {
+                            $usrDao = UsuarioDAO::getSingleton();
+                            $loginDao = LoginDAO::getSingleton();
+                            $pagamentoDao = PagamentoDAO::getSingleton();
+
+                            $result = "
+                            <p class='alert alert-warning form-text text-muted border-warning' align='justify'>
+                                <strong><u>Importante!</u></strong> Operações de <strong class='text-warning'>Alterar</strong> e <strong class='text-danger'>Remover</strong> somente estão acessíveis através do botão <span class='badge badge-info border-info'>Por ID</span> , após realizado a consulta pelo índice.
+                            </p>
+                            <hr/>
+                            <div class='card bg-info'>
+                                <div class='table-responsive'>
+                                    <table class='table table-info table-hover table-borderless text-center table-result'>
+                                        <thead>
+                                            <tr>
+                                                <th scope='col'>ID</th>
+                                                <th scope='col'>Usuário</th>
+                                                <th scope='col'>Pagamento</th>
+                                                <th scope='col' style='width: 35%'>Produtos</th>
+                                                <th scope='col'>Valor</th>
+                                                <th scope='col'>Data Registro</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                            ";
+
+                            foreach ($response["entries"] as $venda) {
+                                $usr = $usrDao->consultarUsuario($venda->getIdUsuario());
+                                $usrNome = $usr === null
+                                    ? "<strong class='text-danger'>Usuário Desconhecido</strong>"
+                                    : ($login = $loginDao->consultarLoginId($usr->getId())) === null
+                                        ? "<strong class='text-danger'>Usuário Desconhecido</strong>"
+                                        : $login->getNome();
+
+                                $pagamento = $pagamentoDao->consultarPagamento($venda->getIdPagamento());
+                                $pagamentoNome = $pagamento === null
+                                    ? "<strong class='text-danger'>Pagamento Desconhecido</strong>"
+                                    : $pagamento->getNome();
+
+                                $produtos = null;
+                                if (sizeof(($id_produtos = $venda->getIdProdutos())) > 0) {
+                                    $produtos = "";
+                                    foreach ($id_produtos as $id_produto)
+                                        if (($produto_result = $dash->consultarProdutoId(intval($id_produto)))["status"])
+                                            $produtos .= "<span class='badge badge-primary'>" . $produto_result["produto"]->getNome() . "</span>&nbsp;";
+                                }
+
+                                $result .= "
+                                                <tr>
+                                                    <th scope='row'>" . $venda->getId() . "</th>
+                                                    <td>" . $usrNome . "</td>
+                                                    <td>" . $pagamentoNome . "</td>
+                                                    <td>" . $produtos . "</td>
+                                                    <td>" . $venda->getValor() . "</td>
+                                                    <td>" . $venda->getDataRegistro() . "</td>
+                                                </tr>
+                                ";
+                            }
+
+                            $result .= "
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            ";
+                            echo $result;
+                        } else
+                            echo "
+                            Algo errado aconteceu durante a consulta das vendas!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "alterar-venda":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo "É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!";
+                            return;
+                        }
+
+                        if (!isset($_POST["id"]) || $_POST["id"] === "" || !is_numeric($_POST["id"])) {
+                            echo "Elemento identificador não especificado!";
+                            return;
+                        }
+
+                        if (!isset($_POST["id_usuario"]) || $_POST["id_usuario"] === "" || !is_numeric($_POST["id_usuario"])) {
+                            echo "O campo <strong>ID Usuário</strong> deve ser referenciado!";
+                            return;
+                        }
+
+                        if (!isset($_POST["id_pagamento"]) || $_POST["id_pagamento"] === "" || !is_numeric($_POST["id_pagamento"])) {
+                            echo "O campo <strong>ID Pagamento</strong> deve ser referenciado!";
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $id_produtos = array();
+                        if (isset($_POST["id_produtos"])) {
+                            if (strpos($_POST["id_produtos"], ",") !== false)
+                                $id_produtos = explode(",", $_POST["id_produtos"]);
+                            else
+                                array_push($id_produtos, $_POST["id_produtos"]);
+                        }
+
+                        $preco_produtos = array();
+                        $valor = 0;
+                        if (isset($id_produtos))
+                            foreach ($id_produtos as $id_produto)
+                                if (($result = $dash->consultarProdutoId(intval($id_produto)))["status"]) {
+                                    $valor += floatval($result["produto"]->getPrecoUnitario());
+                                    array_push($preco_produtos, $result["produto"]->getPrecoUnitario());
+                                }
+
+                        $venda = new VendaModel(
+                            $_POST["id"],
+                            $_POST["id_usuario"],
+                            $_POST["id_pagamento"],
+                            $id_produtos,
+                            $preco_produtos,
+                            $valor,
+                            null
+                        );
+                        $response = $dash->alterarVenda($venda);
+                        if ($response["status"])
+                            echo "Venda alterada com sucesso!";
+                        else
+                            echo "
+                            Algo errado aconteceu durante a alteração da venda!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "remover-venda":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo "É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!";
+                            return;
+                        }
+
+                        if (!isset($_POST["id"]) || $_POST["id"] === "" || !is_numeric($_POST["id"])) {
+                            echo "Elemento identificador não especificado!";
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $response = $dash->removerVenda($_POST["id"]);
+                        if ($response["status"])
+                            echo "Venda removida com sucesso!";
+                        else
+                            echo "
+                            Algo errado aconteceu durante a remoção da venda!
                             <br/>
                             <br/>
                             <strong>Motivo:</strong> " . $response["err"] . "
