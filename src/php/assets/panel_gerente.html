@@ -126,3 +126,122 @@
         </div>
     </div>
 </div>
+<br/>
+<div class="container">
+    <div class="card card-body row border-secondary">
+        <div class="col-md-12 text-center">
+            <h4>Ações para Pagamento:</h4>
+            <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-outline-success" data-toggle="collapse"
+                        data-target="#criar-pagamento" aria-expanded="false" aria-controls="criar-pagamento">
+                    <strong>Criar</strong></button>
+                <button type="button" class="btn btn-sm btn-outline-info" data-toggle="collapse"
+                        data-target="#consultar-pagamento" aria-expanded="false" aria-controls="consultar-pagamento">
+                    <strong>Consultar</strong></button>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="collapse" id="criar-pagamento">
+                <div class="container alert alert-success border-success">
+                    <button type="button" class="close" data-toggle="collapse" data-target="#criar-pagamento"
+                            aria-expanded="false" aria-controls="criar-pagamento">&times;
+                    </button>
+                    <h4>Criar Pagamento</h4>
+                    <hr/>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <input type="text" class="form-control" id="criar-pagamento-nome" name="nome"
+                                   placeholder="Nome"/>
+                        </div>
+                    </div>
+                    <button id="criar-pagamento-btn" type="button" class="btn btn-outline-success"
+                            onclick="criarPagamento()">
+                        <strong>Criar</strong></button>
+                    <hr/>
+                    <div id="criar-pagamento-result"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="collapse" id="consultar-pagamento">
+                <div class="container alert alert-info border-info">
+                    <button type="button" class="close" data-toggle="collapse" data-target="#consultar-pagamento"
+                            aria-expanded="false" aria-controls="consultar-pagamento">&times;
+                    </button>
+                    <h4>Consultar Pagamento</h4>
+                    <hr/>
+                    <div class="col-md-12 text-center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-info" data-toggle="collapse"
+                                    data-target="#consultar-pagamento-id" aria-expanded="false"
+                                    aria-controls="consultar-pagamento-id">
+                                <strong>Por ID</strong></button>
+                            <button type="button" class="btn btn-sm btn-outline-info" data-toggle="collapse"
+                                    data-target="#consultar-pagamento-todos" aria-expanded="false"
+                                    aria-controls="consultar-pagamento-todos">
+                                <strong>Ver Todos</strong>
+                            </button>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class='row'>
+                        <div class='col'>
+                            <div class='collapse' id='consultar-pagamento-id'>
+                                <div class='container alert alert-light border-info'>
+                                    <button type='button' class='close' data-toggle='collapse'
+                                            data-target='#consultar-pagamento-id' aria-expanded='false'
+                                            aria-controls='consultar-pagamento-id'>&times;
+                                    </button>
+                                    <h4>Por ID</h4>
+                                    <hr/>
+                                    <div class="form-row form-inline">
+                                        <div class="form-group">
+                                            <input type="number" class="form-control" id="consultar-pagamento-index"
+                                                   name="index"
+                                                   placeholder="Índice" min="1" step="1"/>
+                                        </div>
+                                        &nbsp;
+                                        <button id="consultar-pagamento-id-btn" type="button"
+                                                class="btn btn-outline-primary" onclick="consultarPagamentoId()">
+                                            <strong>Consultar</strong>
+                                        </button>
+                                    </div>
+                                    <hr/>
+                                    <div id="consultar-pagamento-id-result"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='row'>
+                        <div class='col'>
+                            <div class='collapse' id='consultar-pagamento-todos'>
+                                <div class='container alert alert-light  border-info'>
+                                    <button type='button' class='close' data-toggle='collapse'
+                                            data-target='#consultar-pagamento-todos' aria-expanded='false'
+                                            aria-controls='consultar-pagamento-todos'>&times;
+                                    </button>
+                                    <h4>Ver Todos</h4>
+                                    <hr/>
+                                    <div class="form-row">
+                                        <button id="consultar-pagamento-todos-btn" type="button"
+                                                class="btn btn-outline-primary" onclick="consultarPagamentoTodos()">
+                                            <strong>Consultar</strong></button>
+                                    </div>
+                                    <hr/>
+                                    <div id="consultar-pagamento-todos-result"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
