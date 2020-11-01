@@ -24,12 +24,12 @@ final class DashboardView
     {
         $panels = array();
         $nivel = $this->usuario->getNivel();
-        if ($nivel <= UsuarioModel::SYSADMIN)
+        if ($nivel === UsuarioModel::SYSADMIN)
             array_push($panels, $this->criarPainelSysAdmin());
-        //if ($nivel === usrmodel::GERENTE)
-        array_push($panels, $this->criarPainelGerente());
-        //if ($nivel === usrmodel::GERENTE || $nivel === UsuarioModel::VENDEDOR)
-        array_push($panels, $this->criarPainelVendedor());
+
+        if ($nivel === UsuarioModel::GERENTE)
+            array_push($panels, $this->criarPainelGerente());
+
         if (sizeof($panels) == 0)
             echo "
             <strong>Não foi possível criar nenhum painel administrativo!</strong>
@@ -49,7 +49,6 @@ final class DashboardView
                         </div>
                     </div>
                 </div>";
-
             echo $result;
         }
     }
@@ -66,17 +65,25 @@ final class DashboardView
         return $utils->getContents("/assets/panel_gerente.html");
     }
 
-    private function criarPainelVendedor(): string
-    {
-        $utils = PhpUtils::getSingleton();
-        return $utils->getContents("/assets/panel_vendedor.html");
-    }
-
     public function adicionarScriptsJS(): void
     {
         $fscripts = array();
         $scripts = array();
         array_push($scripts, "/php/assets/utils.js");
+
+        $nivel = $this->usuario->getNivel();
+        if ($nivel === UsuarioModel::SYSADMIN)
+            array_push($scripts, "/php/assets/ops_gerente.js");
+
+        if ($nivel === UsuarioModel::GERENTE) {
+            array_push($scripts, "/php/assets/ops_vendedor.js");
+            array_push($scripts, "/php/assets/ops_pagamento.js");
+        }
+
+        if ($nivel === UsuarioModel::GERENTE || $nivel === UsuarioModel::VENDEDOR) {
+            array_push($scripts, "/php/assets/ops_produto.js");
+            array_push($scripts, "/php/assets/ops_venda.js");
+        }
 
         foreach ($scripts as $script)
             array_push($fscripts, "<script type='text/javascript' src='$script?t=" . time() . "'></script>");
