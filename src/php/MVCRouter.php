@@ -11,6 +11,9 @@ include "PhpUtils.php";
 use php\controller\DashboardController;
 use php\model\UsuarioModel;
 use php\model\LoginModel;
+use php\model\ProdutoModel;
+use php\model\PagamentoModel;
+use php\model\VendaModel;
 use php\controller\LoginController;
 use php\dao\UsuarioDAO;
 use php\PhpUtils;
@@ -309,7 +312,7 @@ switch ($controller) {
                             echo $result;
                         } else
                             echo "
-                            Algo errado aconteceu durante a consulta da conta do gerente!
+                            Algo errado aconteceu durante a consulta da conta dos gerentes!
                             <br/>
                             <br/>
                             <strong>Motivo:</strong> " . $response["err"] . "
@@ -492,7 +495,7 @@ switch ($controller) {
                                             </div>
                                             <input type='hidden' id='alterar-vendedor-id' value='" . $login->getId() . "'/>
                                             <input type='hidden' id='alterar-vendedor-id-usuario' value='" . $usr->getId() . "'/>
-                                            <button id='alterar-gerente-btn' type='button' class='btn btn-outline-warning'
+                                            <button id='alterar-vendedor-btn' type='button' class='btn btn-outline-warning'
                                                     onclick='alterarVendedor()'>
                                                 <strong>Alterar</strong></button>
                                             <hr/>
@@ -587,7 +590,7 @@ switch ($controller) {
                             echo $result;
                         } else
                             echo "
-                            Algo errado aconteceu durante a consulta da conta do vendedor!
+                            Algo errado aconteceu durante a consulta da conta dos vendedores!
                             <br/>
                             <br/>
                             <strong>Motivo:</strong> " . $response["err"] . "
@@ -650,6 +653,714 @@ switch ($controller) {
                         else
                             echo "
                             Algo errado aconteceu durante a remoção da conta do vendedor!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "criar-produto":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo "É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!";
+                            return;
+                        }
+
+                        if (!isset($_POST["nome"]) || $_POST["nome"] === "") {
+                            echo "O campo <strong>Nome</strong> não pode ser vazio!";
+                            return;
+                        }
+
+                        if (!isset($_POST["preco_unitario"]) || $_POST["preco_unitario"] === "" || !is_numeric($_POST["preco_unitario"])) {
+                            echo pJustified("O campo <strong>Preço Unitário</strong> não pode ser vazio e deve ser numérico!");
+                            return;
+                        }
+
+                        if (!isset($_POST["total_unidades"]) || $_POST["total_unidades"] === "" || !is_numeric($_POST["total_unidades"])) {
+                            echo pJustified("O campo <strong>Total Unidades</strong> não pode ser vazio e deve ser numérico!");
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $produto = new ProdutoModel(-1, $_POST["nome"], $_POST["preco_unitario"], $_POST["total_unidades"]);
+                        $response = $dash->criarProduto($produto);
+                        if ($response["status"])
+                            echo "Produto criado com sucesso!";
+                        else
+                            echo "
+                            Algo errado aconteceu durante a criação do novo produto!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "consultar-produto-id":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo pJustified("É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!");
+                            return;
+                        }
+
+                        if (!isset($_POST["id"]) || $_POST["id"] === "" || !is_numeric($_POST["id"])) {
+                            echo pJustified("O campo <strong>Índice</strong> não pode ser vazio e deve ser numérico!");
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $response = $dash->consultarProdutoId($_POST["id"]);
+                        if ($response["status"]) {
+                            $produto = $response["produto"];
+                            echo "
+                            <div class='card bg-info'>
+                                <div class='table-responsive'>
+                                    <table class='table table-info table-striped table-borderless text-center table-result'>
+                                        <thead>
+                                            <tr>
+                                                <th scope='col'>ID</th>
+                                                <th scope='col'>Nome</th>
+                                                <th scope='col'>Preço Unitário</th>
+                                                <th scope='col'>Total Unidades</th>
+                                                <th scope='col'>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope='row'>" . $produto->getId() . "</th>
+                                                <td>" . $produto->getNome() . "</td>
+                                                <td>" . $produto->getPrecoUnitario() . "</td>
+                                                <td>" . $produto->getTotalUnidades() . "</td>
+                                                <td>
+                                                    <div class='text-center'>
+                                                        <div class='btn-group'>
+                                                            <button type='button' class='btn btn-sm btn-warning border-warning' data-toggle='collapse'
+                                                                    data-target='#alterar-produto' aria-expanded='false' aria-controls='alterar-produto'>
+                                                                <strong>Alterar</strong></button>
+                                                            <button type='button' class='btn btn-sm btn-danger border-danger' data-toggle='collapse'
+                                                                    data-target='#remover-produto' aria-expanded='false' aria-controls='remover-produto'>
+                                                                <strong>Remover</strong></button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <hr/>
+                            <div class='row'>
+                                <div class='col'>
+                                    <div class='collapse' id='alterar-produto'>
+                                        <div class='container alert alert-warning border-warning'>
+                                            <button type='button' class='close' data-toggle='collapse' data-target='#alterar-produto'
+                                                    aria-expanded='false' aria-controls='alterar-produto'>&times;
+                                            </button>
+                                            <h4>Alterar Produto</h4>
+                                            <hr/>
+                                            <div class='form-row'>
+                                                <div class='form-group col-md-12'>
+                                                    <input type='text' class='form-control' id='alterar-produto-nome' name='nome'
+                                                           placeholder='Nome' value='" . $produto->getNome() . "'/>
+                                                </div>
+                                                <div class='form-group col-md-6'>
+                                                    <input type='number' class='form-control' id='alterar-produto-preco-unitario'
+                                                            placeholder='Preço Unitário' value='" . $produto->getPrecoUnitario() . "'
+                                                            min='0' step='0.01'/>
+                                                </div>
+                                                <div class='form-group col-md-6'>
+                                                    <input type='number' class='form-control' id='alterar-produto-total-unidades'
+                                                            placeholder='Total Unidades' value='" . $produto->getTotalUnidades() . "'
+                                                            min='1' step='1'/>
+                                                </div>
+                                            </div>
+                                            <input type='hidden' id='alterar-produto-id' value='" . $produto->getId() . "'/>
+                                            <button id='alterar-produto-btn' type='button' class='btn btn-outline-warning'
+                                                    onclick='alterarProduto()'>
+                                                <strong>Alterar</strong></button>
+                                            <hr/>
+                                            <div id='alterar-produto-result'></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div class='col'>
+                                    <div class='collapse' id='remover-produto'>
+                                        <div class='container alert alert-danger border-danger'>
+                                            <button type='button' class='close' data-toggle='collapse' data-target='#remover-produto'
+                                                    aria-expanded='false' aria-controls='remover-produto'>&times;
+                                            </button>
+                                            <h4>Remover Produto</h4>
+                                            <hr/>
+                                            <p align='justify'>
+                                                Você realmente deseja remover o produto <strong>" . $produto->getNome() . "</strong>?
+                                            </p>
+                                            <br/>
+                                            <input type='hidden' id='remover-produto-id' value='" . $produto->getId() . "'/>
+                                            <div class='text-center'>
+                                                <div class='form-group col-md-12'>
+                                                    <button id='remover-produto-btn' type='button' class='btn btn-lg btn-outline-success'
+                                                            onclick='removerProduto()'>
+                                                        <strong>Sim</strong></button>
+                                                    &nbsp;
+                                                    <button type='button' class='btn btn-lg btn-outline-danger' data-toggle='collapse'
+                                                            data-target='#remover-produto' aria-expanded='false' aria-controls='remover-produto'>
+                                                        <strong>Não</strong></button>
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <div id='remover-produto-result'></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            ";
+                        } else
+                            echo "
+                            Algo errado aconteceu durante a consulta do produto!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "consultar-produto-todos":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo "É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!";
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $response = $dash->consultarProdutos();
+                        if ($response["status"]) {
+                            $result = "
+                            <p class='alert alert-warning form-text text-muted border-warning' align='justify'>
+                                <strong><u>Importante!</u></strong> Operações de <strong class='text-warning'>Alterar</strong> e <strong class='text-danger'>Remover</strong> somente estão acessíveis através do botão <span class='badge badge-info border-info'>Por ID</span> , após realizado a consulta pelo índice.
+                            </p>
+                            <hr/>
+                            <div class='card bg-info'>
+                                <div class='table-responsive'>
+                                    <table class='table table-info table-hover table-borderless text-center table-result'>
+                                        <thead>
+                                            <tr>
+                                                <th scope='col'>ID</th>
+                                                <th scope='col'>Nome</th>
+                                                <th scope='col'>Preço Unitário</th>
+                                                <th scope='col'>Total Unidades</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                            ";
+                            foreach ($response["entries"] as $produto)
+                                $result .= "
+                                                <tr>
+                                                    <th scope='row'>" . $produto->getId() . "</th>
+                                                    <td>" . $produto->getNome() . "</td>
+                                                    <td>" . $produto->getPrecoUnitario() . "</td>
+                                                    <td>" . $produto->getTotalUnidades() . "</td>
+                                                </tr>
+                                ";
+                            $result .= "
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            ";
+                            echo $result;
+                        } else
+                            echo "
+                            Algo errado aconteceu durante a consulta dos produtos!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "alterar-produto":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo "É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!";
+                            return;
+                        }
+
+                        if (!isset($_POST["nome"]) || $_POST["nome"] === "") {
+                            echo "O campo <strong>Nome</strong> não pode ser vazio!";
+                            return;
+                        }
+
+                        if (!isset($_POST["preco_unitario"]) || $_POST["preco_unitario"] === "" || !is_numeric($_POST["preco_unitario"])) {
+                            echo pJustified("O campo <strong>Preço Unitário</strong> não pode ser vazio e deve ser numérico!");
+                            return;
+                        }
+
+                        if (!isset($_POST["total_unidades"]) || $_POST["total_unidades"] === "" || !is_numeric($_POST["total_unidades"])) {
+                            echo pJustified("O campo <strong>Total Unidades</strong> não pode ser vazio e deve ser numérico!");
+                            return;
+                        }
+
+                        if (!isset($_POST["id"]) || $_POST["id"] === "" || !is_numeric($_POST["id"])) {
+                            echo "Elemento identificador não especificado!";
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $produto = new ProdutoModel($_POST["id"], $_POST["nome"], $_POST["preco_unitario"], $_POST["total_unidades"]);
+                        $response = $dash->alterarProduto($produto);
+                        if ($response["status"])
+                            echo "Produto alterado com sucesso!";
+                        else
+                            echo "
+                            Algo errado aconteceu durante a alteração do produto!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "remover-produto":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo "É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!";
+                            return;
+                        }
+
+                        if (!isset($_POST["id"]) || $_POST["id"] === "" || !is_numeric($_POST["id"])) {
+                            echo "Elemento identificador não especificado!";
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $response = $dash->removerProduto($_POST["id"]);
+                        if ($response["status"])
+                            echo "Produto removido com sucesso!";
+                        else
+                            echo "
+                            Algo errado aconteceu durante a remoção do produto!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "criar-pagamento":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo "É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!";
+                            return;
+                        }
+
+                        if (!isset($_POST["nome"]) || $_POST["nome"] === "") {
+                            echo "O campo <strong>Nome</strong> não pode ser vazio!";
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $pagamento = new PagamentoModel(-1, $_POST["nome"]);
+                        $response = $dash->criarPagamento($pagamento);
+                        if ($response["status"])
+                            echo "Pagamento criado com sucesso!";
+                        else
+                            echo "
+                            Algo errado aconteceu durante a criação do novo pagamento!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "consultar-pagamento-id":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo pJustified("É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!");
+                            return;
+                        }
+
+                        if (!isset($_POST["id"]) || $_POST["id"] === "" || !is_numeric($_POST["id"])) {
+                            echo pJustified("O campo <strong>Índice</strong> não pode ser vazio e deve ser numérico!");
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $response = $dash->consultarPagamentoId($_POST["id"]);
+                        if ($response["status"]) {
+                            $pagamento = $response["produto"];
+                            echo "
+                            <div class='card bg-info'>
+                                <div class='table-responsive'>
+                                    <table class='table table-info table-striped table-borderless text-center table-result'>
+                                        <thead>
+                                            <tr>
+                                                <th scope='col'>ID</th>
+                                                <th scope='col'>Nome</th>
+                                                <th scope='col'>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope='row'>" . $produto->getId() . "</th>
+                                                <td>" . $pagamento->getNome() . "</td>
+                                                <td>
+                                                    <div class='text-center'>
+                                                        <div class='btn-group'>
+                                                            <button type='button' class='btn btn-sm btn-warning border-warning' data-toggle='collapse'
+                                                                    data-target='#alterar-pagamento' aria-expanded='false' aria-controls='alterar-pagamento'>
+                                                                <strong>Alterar</strong></button>
+                                                            <button type='button' class='btn btn-sm btn-danger border-danger' data-toggle='collapse'
+                                                                    data-target='#remover-pagamento' aria-expanded='false' aria-controls='remover-pagamento'>
+                                                                <strong>Remover</strong></button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <hr/>
+                            <div class='row'>
+                                <div class='col'>
+                                    <div class='collapse' id='alterar-pagamento'>
+                                        <div class='container alert alert-warning border-warning'>
+                                            <button type='button' class='close' data-toggle='collapse' data-target='#alterar-pagamento'
+                                                    aria-expanded='false' aria-controls='alterar-pagamento'>&times;
+                                            </button>
+                                            <h4>Alterar Pagamento</h4>
+                                            <hr/>
+                                            <div class='form-row'>
+                                                <div class='form-group col-md-12'>
+                                                    <input type='text' class='form-control' id='alterar-pagamento-nome' name='nome'
+                                                           placeholder='Nome' value='" . $pagamento->getNome() . "'/>
+                                                </div>
+                                            </div>
+                                            <input type='hidden' id='alterar-pagamento-id' value='" . $pagamento->getId() . "'/>
+                                            <button id='alterar-pagamento-btn' type='button' class='btn btn-outline-warning'
+                                                    onclick='alterarPagamento()'>
+                                                <strong>Alterar</strong></button>
+                                            <hr/>
+                                            <div id='alterar-pagamento-result'></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div class='col'>
+                                    <div class='collapse' id='remover-pagamento'>
+                                        <div class='container alert alert-danger border-danger'>
+                                            <button type='button' class='close' data-toggle='collapse' data-target='#remover-pagamento'
+                                                    aria-expanded='false' aria-controls='remover-pagamento'>&times;
+                                            </button>
+                                            <h4>Remover Pagamento</h4>
+                                            <hr/>
+                                            <p align='justify'>
+                                                Você realmente deseja remover o pagamento <strong>" . $pagamento->getNome() . "</strong>?
+                                            </p>
+                                            <br/>
+                                            <input type='hidden' id='remover-pagamento-id' value='" . $pagamento->getId() . "'/>
+                                            <div class='text-center'>
+                                                <div class='form-group col-md-12'>
+                                                    <button id='remover-pagamento-btn' type='button' class='btn btn-lg btn-outline-success'
+                                                            onclick='removerPagamento()'>
+                                                        <strong>Sim</strong></button>
+                                                    &nbsp;
+                                                    <button type='button' class='btn btn-lg btn-outline-danger' data-toggle='collapse'
+                                                            data-target='#remover-pagamento' aria-expanded='false' aria-controls='remover-pagamento'>
+                                                        <strong>Não</strong></button>
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <div id='remover-pagamento-result'></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            ";
+                        } else
+                            echo "
+                            Algo errado aconteceu durante a consulta do pagamento!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "consultar-pagamento-todos":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo "É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!";
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $response = $dash->consultarPagamentos();
+                        if ($response["status"]) {
+                            $result = "
+                            <p class='alert alert-warning form-text text-muted border-warning' align='justify'>
+                                <strong><u>Importante!</u></strong> Operações de <strong class='text-warning'>Alterar</strong> e <strong class='text-danger'>Remover</strong> somente estão acessíveis através do botão <span class='badge badge-info border-info'>Por ID</span> , após realizado a consulta pelo índice.
+                            </p>
+                            <hr/>
+                            <div class='card bg-info'>
+                                <div class='table-responsive'>
+                                    <table class='table table-info table-hover table-borderless text-center table-result'>
+                                        <thead>
+                                            <tr>
+                                                <th scope='col'>ID</th>
+                                                <th scope='col'>Nome</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                            ";
+                            foreach ($response["entries"] as $pagamento)
+                                $result .= "
+                                                <tr>
+                                                    <th scope='row'>" . $pagamento->getId() . "</th>
+                                                    <td>" . $pagamento->getNome() . "</td>
+                                                </tr>
+                                ";
+                            $result .= "
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            ";
+                            echo $result;
+                        } else
+                            echo "
+                            Algo errado aconteceu durante a consulta dos pagamentos!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "alterar-pagamento":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo "É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!";
+                            return;
+                        }
+
+                        if (!isset($_POST["nome"]) || $_POST["nome"] === "") {
+                            echo "O campo <strong>Nome</strong> não pode ser vazio!";
+                            return;
+                        }
+
+                        if (!isset($_POST["id"]) || $_POST["id"] === "" || !is_numeric($_POST["id"])) {
+                            echo "Elemento identificador não especificado!";
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $pagamento = new PagamentoModel($_POST["id"], $_POST["nome"]);
+                        $response = $dash->alterarPagamento($pagamento);
+                        if ($response["status"])
+                            echo "Pagamento alterado com sucesso!";
+                        else
+                            echo "
+                            Algo errado aconteceu durante a alteração do pagamento!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "remover-pagamento":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo "É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!";
+                            return;
+                        }
+
+                        if (!isset($_POST["id"]) || $_POST["id"] === "" || !is_numeric($_POST["id"])) {
+                            echo "Elemento identificador não especificado!";
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $response = $dash->removerPagamento($_POST["id"]);
+                        if ($response["status"])
+                            echo "Pagamento removido com sucesso!";
+                        else
+                            echo "
+                            Algo errado aconteceu durante a remoção do pagamento!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "criar-venda":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo "É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!";
+                            return;
+                        }
+
+                        if (!isset($_POST["id_usuario"]) || $_POST["id_usuario"] === "" || !is_numeric($_POST["id_usuario"])) {
+                            echo "O campo <strong>ID Usuário</strong> deve ser referenciado!";
+                            return;
+                        }
+
+                        if (!isset($_POST["id_pagamento"]) || $_POST["id_pagamento"] === "" || !is_numeric($_POST["id_pagamento"])) {
+                            echo "O campo <strong>ID Pagamento</strong> deve ser referenciado!";
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $id_produtos = array();
+                        if (isset($_POST["id_produtos"])) {
+                            if (!strpos($_POST["id_produtos"], ","))
+                                $id_produtos = explode(",", $_POST["id_produtos"]);
+                            else
+                                array_push($id_produtos, $_POST["id_produtos"]);
+                        }
+
+                        $preco_produtos = array();
+                        $valor = 0;
+                        if (isset($id_produtos))
+                            foreach ($id_produtos as $id_produto) {
+                                $result = $dash->consultarProdutoId(intval($id_produto));
+                                if ($result["status"]) {
+                                    $valor += $result["produto"]->getPrecoUnitario();
+                                    array_push($preco_produtos, $result["produto"]->getPrecoUnitario());
+                                }
+                            }
+
+                        $venda = new VendaModel(
+                            -1,
+                            $_POST["id_usuario"],
+                            $_POST["id_pagamento"],
+                            $id_produtos,
+                            $preco_produtos,
+                            $valor,
+                            null
+                        );
+                        $response = $dash->criarVenda($venda);
+                        if ($response["status"])
+                            echo "Venda criada com sucesso!";
+                        else
+                            echo "
+                            Algo errado aconteceu durante a criação da nova venda!
+                            <br/>
+                            <br/>
+                            <strong>Motivo:</strong> " . $response["err"] . "
+                            ";
+                    }
+                    break;
+                case "consultar-venda-id":
+                    {
+                        if ($user->getNivel() > UsuarioModel::VENDEDOR) {
+                            echo pJustified("É necessário ter nível de acesso <strong>VENDEDOR</strong> para realizar essa operação!");
+                            return;
+                        }
+
+                        if (!isset($_POST["id"]) || $_POST["id"] === "" || !is_numeric($_POST["id"])) {
+                            echo pJustified("O campo <strong>Índice</strong> não pode ser vazio e deve ser numérico!");
+                            return;
+                        }
+
+                        $dash = DashboardController::getSingleton();
+                        $response = $dash->consultarVendaId($_POST["id"]);
+                        // todo: continue working on this tomorrow
+                        if ($response["status"]) {
+                            $venda = $response["venda"];
+                            echo "
+                            <div class='card bg-info'>
+                                <div class='table-responsive'>
+                                    <table class='table table-info table-striped table-borderless text-center table-result'>
+                                        <thead>
+                                            <tr>
+                                                <th scope='col'>ID</th>
+                                                <th scope='col'>Usuário</th>
+                                                <th scope='col'>Pagamento</th>
+                                                <th scope='col'>Produtos</th>
+                                                <th scope='col'>Valor</th>
+                                                <th scope='col'>Data Registro</th>
+                                                <th scope='col'>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope='row'>" . $produto->getId() . "</th>
+                                                <td>" . $venda->getNome() . "</td>
+                                                <td>
+                                                    <div class='text-center'>
+                                                        <div class='btn-group'>
+                                                            <button type='button' class='btn btn-sm btn-warning border-warning' data-toggle='collapse'
+                                                                    data-target='#alterar-venda' aria-expanded='false' aria-controls='alterar-venda'>
+                                                                <strong>Alterar</strong></button>
+                                                            <button type='button' class='btn btn-sm btn-danger border-danger' data-toggle='collapse'
+                                                                    data-target='#remover-venda' aria-expanded='false' aria-controls='remover-venda'>
+                                                                <strong>Remover</strong></button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <hr/>
+                            <div class='row'>
+                                <div class='col'>
+                                    <div class='collapse' id='alterar-pagamento'>
+                                        <div class='container alert alert-warning border-warning'>
+                                            <button type='button' class='close' data-toggle='collapse' data-target='#alterar-pagamento'
+                                                    aria-expanded='false' aria-controls='alterar-pagamento'>&times;
+                                            </button>
+                                            <h4>Alterar Pagamento</h4>
+                                            <hr/>
+                                            <div class='form-row'>
+                                                <div class='form-group col-md-12'>
+                                                    <input type='text' class='form-control' id='alterar-pagamento-nome' name='nome'
+                                                           placeholder='Nome' value='" . $pagamento->getNome() . "'/>
+                                                </div>
+                                            </div>
+                                            <input type='hidden' id='alterar-pagamento-id' value='" . $pagamento->getId() . "'/>
+                                            <button id='alterar-pagamento-btn' type='button' class='btn btn-outline-warning'
+                                                    onclick='alterarPagamento()'>
+                                                <strong>Alterar</strong></button>
+                                            <hr/>
+                                            <div id='alterar-pagamento-result'></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div class='col'>
+                                    <div class='collapse' id='remover-pagamento'>
+                                        <div class='container alert alert-danger border-danger'>
+                                            <button type='button' class='close' data-toggle='collapse' data-target='#remover-pagamento'
+                                                    aria-expanded='false' aria-controls='remover-pagamento'>&times;
+                                            </button>
+                                            <h4>Remover Pagamento</h4>
+                                            <hr/>
+                                            <p align='justify'>
+                                                Você realmente deseja remover o pagamento <strong>" . $pagamento->getNome() . "</strong>?
+                                            </p>
+                                            <br/>
+                                            <input type='hidden' id='remover-pagamento-id' value='" . $pagamento->getId() . "'/>
+                                            <div class='text-center'>
+                                                <div class='form-group col-md-12'>
+                                                    <button id='remover-pagamento-btn' type='button' class='btn btn-lg btn-outline-success'
+                                                            onclick='removerPagamento()'>
+                                                        <strong>Sim</strong></button>
+                                                    &nbsp;
+                                                    <button type='button' class='btn btn-lg btn-outline-danger' data-toggle='collapse'
+                                                            data-target='#remover-pagamento' aria-expanded='false' aria-controls='remover-pagamento'>
+                                                        <strong>Não</strong></button>
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <div id='remover-pagamento-result'></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            ";
+                        } else
+                            echo "
+                            Algo errado aconteceu durante a consulta do pagamento!
                             <br/>
                             <br/>
                             <strong>Motivo:</strong> " . $response["err"] . "
