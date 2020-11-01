@@ -63,6 +63,48 @@ final class ProdutoDAO
         return $produto;
     }
 
+    public function consultarProdutoNome(string $nome): ?ProdutoModel
+    {
+        $mysql = MySQLDatabase::getSingleton();
+        $result = $mysql->select(
+            new SQLQuery(
+                "SELECT * FROM `produtos` WHERE `nome` = ':nome'",
+                [":nome" => $nome]
+            )
+        );
+        if ($result === null)
+            return null;
+
+        $data = $result->fetch(\PDO::FETCH_OBJ);
+        $produto = new ProdutoModel(
+            $data->id,
+            $data->nome,
+            $data->preco_unitario,
+            $data->total_unidades
+        );
+        return $produto;
+    }
+
+    public function consultarProdutos(): ?array
+    {
+        $mysql = MySQLDatabase::getSingleton();
+        $result = $mysql->select(new SQLQuery("SELECT * FROM `produtos`"));
+        if ($result === null)
+            return null;
+
+        $collection = array();
+        while ($data = $result->fetch(\PDO::FETCH_OBJ))
+            array_push($collection,
+                new ProdutoModel(
+                    $data->id,
+                    $data->nome,
+                    $data->preco_unitario,
+                    $data->total_unidades
+                )
+            );
+        return $collection;
+    }
+
     public function alterarProduto(ProdutoModel $produto): bool
     {
         $mysql = MySQLDatabase::getSingleton();
