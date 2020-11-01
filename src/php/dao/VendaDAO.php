@@ -68,6 +68,29 @@ final class VendaDAO
         return $venda;
     }
 
+    public function consultarVendas(): ?array
+    {
+        $mysql = MySQLDatabase::getSingleton();
+        $result = $mysql->select(new SQLQuery("SELECT * FROM `vendas`"));
+        if ($result === null)
+            return null;
+
+        $collection = array();
+        while ($data = $result->fetch(\PDO::FETCH_OBJ))
+            array_push($collection,
+                new VendaModel(
+                    $data->id,
+                    $data->id_usuario,
+                    $data->id_pagamento,
+                    explode(',', $data->id_produtos),
+                    explode(',', $data->preco_produtos),
+                    $data->valor,
+                    $data->data_registro
+                )
+            );
+        return $collection;
+    }
+
     public function alterarVenda(VendaModel $venda): bool
     {
         $mysql = MySQLDatabase::getSingleton();
