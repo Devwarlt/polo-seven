@@ -12,7 +12,7 @@ final class VendaModel
 {
     private $id, $id_usuario, $id_pagamento, $id_produtos, $preco_produtos, $valor, $data_registro;
 
-    public function __construct(int $id, int $id_usuario, int $id_pagamento, array $id_produtos, array $preco_produtos, float $valor, mixed $data_registro)
+    public function __construct(int $id, int $id_usuario, int $id_pagamento, array $id_produtos, array $preco_produtos, float $valor, ?mixed $data_registro)
     {
         $this->id = $id;
         $this->id_usuario = $id_usuario;
