@@ -30,7 +30,7 @@ final class DashboardView
         if ($nivel === UsuarioModel::GERENTE)
             array_push($panels, $this->criarPainelGerente());
 
-        if (sizeof($panels) == 0)
+        if (sizeof($panels) == 0 && $nivel < UsuarioModel::VENDEDOR)
             echo "
             <strong>Não foi possível criar nenhum painel administrativo!</strong>
             <br/>
