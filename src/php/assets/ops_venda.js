@@ -182,7 +182,7 @@ function adicionarItemProduto(label) {
             "<input type='hidden' id='" + label + "-venda-id-produtos-" + pId + "' value='" + $(this).val() + "'/>" +
             "<button class='close' style='margin: 4px' data-toggle='collapse' data-target='" + label + "-venda-id-produtos-div-" + pId + "' " +
             "aria-expanded='false' aria-controls='" + label + "-venda-id-produtos-div-" + pId + "' " +
-            "onclick='removerItemProduto('" + label + "', " + pId + ")'>&times;</button>" +
+            "onclick='removerItemProduto(\"" + label + "\", " + pId + ")'>&times;</button>" +
             "<div class='card-body'>" +
             "<p class='card-text'>" + $(this).text() + "</p>" +
             "</div></div>"

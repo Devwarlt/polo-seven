@@ -1295,7 +1295,7 @@ switch ($controller) {
                                             <input type='hidden' id='alterar-venda-id-produtos-" . $pId . "' value='" . $id_produto . "'/>
                                             <button class='close' style='margin: 4px' data-toggle='collapse' data-target='alterar-venda-id-produtos-div-" . $pId . "' 
                                                     aria-expanded='false' aria-controls='alterar-venda-id-produtos-div-" . $pId . "' 
-                                                    onclick='removerItemProduto(\"alterar\", " . intval($id_produto) . ")'>&times;</button>
+                                                    onclick=\"removerItemProduto('alterar', " . $pId . ")\">&times;</button>
                                             <div class='card-body'>
                                                 <p class='card-text'>" . $result["produto"]->getNome() . "</p>
                                             </div>
@@ -1384,7 +1384,7 @@ switch ($controller) {
                                             <button type='button' class='close' data-toggle='collapse' data-target='#alterar-pagamento'
                                                     aria-expanded='false' aria-controls='alterar-pagamento'>&times;
                                             </button>
-                                            <h4>Alterar Pagamento</h4>
+                                            <h4>Alterar Venda</h4>
                                             <hr/>
                                             <div class='form-row'>
                                                 <div class='form-group col-md-6'>
