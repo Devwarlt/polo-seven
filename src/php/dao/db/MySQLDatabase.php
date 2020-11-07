@@ -84,10 +84,11 @@ final class MySQLDatabase
     private function dql(string $sql): ?\PDOStatement
     {
         $query = self::$connection->query($sql);
-        if ($query->execute() && $query->rowCount() > 0)
+        if (($err = $query->execute()) && $query->rowCount() > 0)
             return $query;
 
-        $this->displayPDOError($query);
+        if ($err)
+            $this->displayPDOError($query);
         return null;
     }
 }
