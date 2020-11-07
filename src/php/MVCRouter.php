@@ -1209,6 +1209,11 @@ switch ($controller) {
                             return;
                         }
 
+                        if (!isset($_POST["id_produtos"]) || $_POST["id_produtos"] === "") {
+                            echo "É necessário incluir pelo menos um produto na venda!";
+                            return;
+                        }
+
                         $dash = DashboardController::getSingleton();
                         $id_produtos = array();
                         if (isset($_POST["id_produtos"])) {
@@ -1220,12 +1225,11 @@ switch ($controller) {
 
                         $preco_produtos = array();
                         $valor = 0;
-                        if (isset($id_produtos))
-                            foreach ($id_produtos as $id_produto)
-                                if (($result = $dash->consultarProdutoId(intval($id_produto)))["status"]) {
-                                    $valor += floatval($result["produto"]->getPrecoUnitario());
-                                    array_push($preco_produtos, $result["produto"]->getPrecoUnitario());
-                                }
+                        foreach ($id_produtos as $id_produto)
+                            if (($result = $dash->consultarProdutoId(intval($id_produto)))["status"]) {
+                                $valor += floatval($result["produto"]->getPrecoUnitario());
+                                array_push($preco_produtos, $result["produto"]->getPrecoUnitario());
+                            }
 
                         $venda = new VendaModel(
                             -1,
